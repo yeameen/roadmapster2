@@ -4,15 +4,7 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { GripVertical, Pencil, Trash2 } from "lucide-react";
 import type { Epic } from "@/lib/types";
-import { DROPPABLE_IDS } from "@/lib/constants";
-
-const SIZE_COLORS: Record<string, string> = {
-  XS: "bg-blue-100 text-blue-700",
-  S: "bg-cyan-100 text-cyan-700",
-  M: "bg-purple-100 text-purple-700",
-  L: "bg-orange-100 text-orange-700",
-  XL: "bg-red-100 text-red-700",
-};
+import { DROPPABLE_IDS, SIZE_COLORS } from "@/lib/constants";
 
 type ContentProps = {
   epic: Epic;

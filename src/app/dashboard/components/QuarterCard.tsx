@@ -1,20 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useDroppable } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { ChevronDown, ChevronRight, Pencil, Trash2, Users } from "lucide-react";
 import { SortableEpicCard } from "./EpicCard";
 import { CapacityBar } from "./CapacityBar";
 import { calculateCapacity } from "@/lib/capacity";
-import { DROPPABLE_IDS } from "@/lib/constants";
+import { DROPPABLE_IDS, STATUS_COLORS } from "@/lib/constants";
 import type { Epic, Quarter, QuarterMember, Team } from "@/lib/types";
-
-const STATUS_COLORS: Record<string, string> = {
-  planning: "bg-yellow-100 text-yellow-800",
-  active: "bg-green-100 text-green-800",
-  completed: "bg-gray-100 text-gray-600",
-};
 
 type Props = {
   quarter: Quarter;
@@ -45,14 +39,14 @@ export function QuarterCard({
 
   const sortableIds = epics.map((e) => `${DROPPABLE_IDS.EPIC_PREFIX}${e.id}`);
 
-  const capacity = calculateCapacity({
+  const capacity = useMemo(() => calculateCapacity({
     workingDays: quarter.working_days,
     quarterMembers,
     bufferPercentage: team.buffer_percentage,
     oncallPerSprint: team.oncall_per_sprint,
     sprintsPerQuarter: team.sprints_per_quarter,
     assignedEpics: epics,
-  });
+  }), [quarter.working_days, quarterMembers, team.buffer_percentage, team.oncall_per_sprint, team.sprints_per_quarter, epics]);
 
   return (
     <div

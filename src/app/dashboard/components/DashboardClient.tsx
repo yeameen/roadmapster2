@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Download, Settings } from "lucide-react";
 import { useTeam } from "@/hooks/useTeam";
 import { usePlanningMembers } from "@/hooks/usePlanningMembers";
@@ -21,9 +21,8 @@ export function DashboardClient({ workspaceId }: { workspaceId: string }) {
   const { members, addMember, updateMember, removeMember } = usePlanningMembers(team?.id ?? null);
   const { quarters, createQuarter, updateQuarter, deleteQuarter } = useQuarters(team?.id ?? null);
   const { epics, createEpic, updateEpic, deleteEpic } = useEpics(team?.id ?? null);
-  const { quarterMembersMap, refetch: refetchQuarterMembers } = useTeamQuarterMembers(
-    quarters.map((q) => q.id)
-  );
+  const quarterIds = useMemo(() => quarters.map((q) => q.id), [quarters]);
+  const { quarterMembersMap, refetch: refetchQuarterMembers } = useTeamQuarterMembers(quarterIds);
 
   const [showSettings, setShowSettings] = useState(false);
   const [showQuarterForm, setShowQuarterForm] = useState(false);

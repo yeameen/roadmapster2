@@ -9,7 +9,6 @@ import {
   useSensors,
   pointerWithin,
   closestCorners,
-  getFirstCollision,
   type DragStartEvent,
   type DragOverEvent,
   type DragEndEvent,
@@ -268,7 +267,7 @@ export function PlanningBoard({
           epics={backlogEpics}
           onAddEpic={onAddEpic}
           onEditEpic={onEditEpic}
-          onDeleteEpic={(id) => { onDeleteEpic(id); }}
+          onDeleteEpic={onDeleteEpic}
         />
 
         <div>
@@ -299,10 +298,10 @@ export function PlanningBoard({
                   quarterMembers={quarterMembersMap[quarter.id] ?? []}
                   epics={getQuarterEpics(quarter.id)}
                   onEditQuarter={onEditQuarter}
-                  onDeleteQuarter={(id) => { onDeleteQuarter(id); }}
+                  onDeleteQuarter={onDeleteQuarter}
                   onQuarterMembers={onQuarterMembers}
                   onEditEpic={onEditEpic}
-                  onDeleteEpic={(id) => { onDeleteEpic(id); }}
+                  onDeleteEpic={onDeleteEpic}
                 />
               ))}
             </div>

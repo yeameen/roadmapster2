@@ -1,4 +1,18 @@
-import type { EpicSize, EpicPriority } from "./types";
+import type { EpicSize, EpicPriority, QuarterStatus } from "./types";
+
+export const SIZE_COLORS: Record<EpicSize, string> = {
+  XS: "bg-blue-100 text-blue-700",
+  S: "bg-cyan-100 text-cyan-700",
+  M: "bg-purple-100 text-purple-700",
+  L: "bg-orange-100 text-orange-700",
+  XL: "bg-red-100 text-red-700",
+};
+
+export const STATUS_COLORS: Record<QuarterStatus, string> = {
+  planning: "bg-yellow-100 text-yellow-800",
+  active: "bg-green-100 text-green-800",
+  completed: "bg-gray-100 text-gray-600",
+};
 
 export const SIZE_TO_DAYS: Record<EpicSize, number> = {
   XS: 5,
