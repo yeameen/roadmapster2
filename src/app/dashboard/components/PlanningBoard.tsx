@@ -20,6 +20,7 @@ import { Plus } from "lucide-react";
 import { BacklogPanel } from "./BacklogPanel";
 import { QuarterCard } from "./QuarterCard";
 import { EpicCardContent } from "./EpicCard";
+import { calculateCapacity, wouldExceedCapacity } from "@/lib/capacity";
 import { DROPPABLE_IDS } from "@/lib/constants";
 import type { Epic, Quarter, QuarterMember, Team } from "@/lib/types";
 
@@ -72,6 +73,15 @@ export function PlanningBoard({
   const [activeId, setActiveId] = useState<string | null>(null);
   const [localEpics, setLocalEpics] = useState(propEpics);
   const snapshotRef = useRef(propEpics);
+  const [capacityWarning, setCapacityWarning] = useState<string | null>(null);
+
+  // Auto-dismiss capacity warning
+  useEffect(() => {
+    if (capacityWarning) {
+      const timer = window.setTimeout(() => setCapacityWarning(null), 3000);
+      return () => window.clearTimeout(timer);
+    }
+  }, [capacityWarning]);
 
   // Sync local state with props when not dragging
   useEffect(() => {
@@ -177,6 +187,33 @@ export function PlanningBoard({
     const crossedContainers = original.quarter_id !== current.quarter_id;
 
     if (crossedContainers) {
+      // If moving to a quarter, check capacity
+      if (current.quarter_id) {
+        const quarter = quarters.find((q) => q.id === current.quarter_id);
+        if (quarter) {
+          const qMembers = quarterMembersMap[quarter.id] ?? [];
+          const existingEpics = localEpics.filter(
+            (e) => e.quarter_id === quarter.id && e.id !== activeEpicId
+          );
+          const capacity = calculateCapacity({
+            workingDays: quarter.working_days,
+            quarterMembers: qMembers,
+            bufferPercentage: team.buffer_percentage,
+            oncallPerSprint: team.oncall_per_sprint,
+            sprintsPerQuarter: team.sprints_per_quarter,
+            assignedEpics: existingEpics,
+          });
+
+          if (wouldExceedCapacity(capacity, current.size)) {
+            setLocalEpics(snapshotRef.current);
+            setCapacityWarning(
+              `"${current.title}" (${current.size}) would exceed ${quarter.name}'s capacity (${capacity.remaining} days remaining)`
+            );
+            return;
+          }
+        }
+      }
+
       // Cross-container move: persist quarter_id change
       const targetCount = localEpics.filter(
         (e) => e.quarter_id === current.quarter_id && e.id !== activeEpicId
@@ -276,6 +313,12 @@ export function PlanningBoard({
       <DragOverlay>
         {activeEpic ? <EpicCardContent epic={activeEpic} isDragOverlay /> : null}
       </DragOverlay>
+
+      {capacityWarning && (
+        <div className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-lg bg-red-600 px-5 py-3 text-sm font-medium text-white shadow-lg">
+          {capacityWarning}
+        </div>
+      )}
     </DndContext>
   );
 }

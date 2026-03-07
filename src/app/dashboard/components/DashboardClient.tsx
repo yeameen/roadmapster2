@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Settings } from "lucide-react";
+import { Download, Settings } from "lucide-react";
 import { useTeam } from "@/hooks/useTeam";
 import { usePlanningMembers } from "@/hooks/usePlanningMembers";
 import { useQuarters } from "@/hooks/useQuarters";
@@ -45,6 +45,59 @@ export function DashboardClient({ workspaceId }: { workspaceId: string }) {
     );
   }
 
+  function handleExport() {
+    if (!team) return;
+    const data = {
+      team: {
+        name: team.name,
+        buffer_percentage: team.buffer_percentage,
+        oncall_per_sprint: team.oncall_per_sprint,
+        sprints_per_quarter: team.sprints_per_quarter,
+        default_working_days: team.default_working_days,
+      },
+      members: members.map((m) => ({ name: m.name, skills: m.skills })),
+      quarters: quarters.map((q) => ({
+        name: q.name,
+        status: q.status,
+        working_days: q.working_days,
+        start_date: q.start_date,
+        end_date: q.end_date,
+        members: (quarterMembersMap[q.id] ?? []).map((qm) => {
+          const member = members.find((m) => m.id === qm.planning_member_id);
+          return { name: member?.name ?? "Unknown", vacation_days: qm.vacation_days };
+        }),
+        epics: epics
+          .filter((e) => e.quarter_id === q.id)
+          .sort((a, b) => a.position - b.position)
+          .map((e) => ({
+            title: e.title,
+            size: e.size,
+            priority: e.priority,
+            description: e.description,
+            owner: e.owner,
+          })),
+      })),
+      backlog: epics
+        .filter((e) => !e.quarter_id)
+        .map((e) => ({
+          title: e.title,
+          size: e.size,
+          priority: e.priority,
+          description: e.description,
+          owner: e.owner,
+        })),
+      exported_at: new Date().toISOString(),
+    };
+
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${team.name.toLowerCase().replace(/\s+/g, "-")}-roadmap-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
   if (!team) {
     return (
       <div className="py-12">
@@ -63,13 +116,22 @@ export function DashboardClient({ workspaceId }: { workspaceId: string }) {
             {members.length} member{members.length !== 1 ? "s" : ""} · {quarters.length} quarter{quarters.length !== 1 ? "s" : ""} · {epics.length} epic{epics.length !== 1 ? "s" : ""}
           </p>
         </div>
-        <button
-          onClick={() => setShowSettings(true)}
-          className="flex items-center gap-2 rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
-        >
-          <Settings className="h-4 w-4" />
-          Team Settings
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleExport}
+            className="flex items-center gap-2 rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+          >
+            <Download className="h-4 w-4" />
+            Export
+          </button>
+          <button
+            onClick={() => setShowSettings(true)}
+            className="flex items-center gap-2 rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+          >
+            <Settings className="h-4 w-4" />
+            Team Settings
+          </button>
+        </div>
       </div>
 
       <PlanningBoard
