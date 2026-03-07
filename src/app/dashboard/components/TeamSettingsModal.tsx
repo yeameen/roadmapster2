@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { X, Plus, Trash2 } from "lucide-react";
+import { Modal } from "./Modal";
 import type { Team, PlanningMember } from "@/lib/types";
 
 type Props = {
@@ -52,8 +53,7 @@ export function TeamSettingsModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="mx-4 w-full max-w-lg rounded-lg bg-white shadow-xl">
+    <Modal onClose={onClose} maxWidth="max-w-lg">
         <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4">
           <h2 className="text-lg font-semibold text-gray-900">
             Team Settings
@@ -61,6 +61,7 @@ export function TeamSettingsModal({
           <button
             onClick={onClose}
             className="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+            aria-label="Close"
           >
             <X className="h-5 w-5" />
           </button>
@@ -70,10 +71,11 @@ export function TeamSettingsModal({
           {/* Team settings */}
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label htmlFor="team-name" className="block text-sm font-medium text-gray-700">
                 Team name
               </label>
               <input
+                id="team-name"
                 type="text"
                 value={teamName}
                 onChange={(e) => setTeamName(e.target.value)}
@@ -83,10 +85,11 @@ export function TeamSettingsModal({
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label htmlFor="buffer-pct" className="block text-sm font-medium text-gray-700">
                   Buffer %
                 </label>
                 <input
+                  id="buffer-pct"
                   type="number"
                   min={0}
                   max={100}
@@ -96,10 +99,11 @@ export function TeamSettingsModal({
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label htmlFor="oncall" className="block text-sm font-medium text-gray-700">
                   On-call / sprint
                 </label>
                 <input
+                  id="oncall"
                   type="number"
                   min={0}
                   value={oncall}
@@ -108,10 +112,11 @@ export function TeamSettingsModal({
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label htmlFor="sprints" className="block text-sm font-medium text-gray-700">
                   Sprints / quarter
                 </label>
                 <input
+                  id="sprints"
                   type="number"
                   min={1}
                   value={sprints}
@@ -120,10 +125,11 @@ export function TeamSettingsModal({
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label htmlFor="working-days" className="block text-sm font-medium text-gray-700">
                   Working days / quarter
                 </label>
                 <input
+                  id="working-days"
                   type="number"
                   min={1}
                   value={workingDays}
@@ -198,8 +204,7 @@ export function TeamSettingsModal({
             {saving ? "Saving..." : "Save"}
           </button>
         </div>
-      </div>
-    </div>
+    </Modal>
   );
 }
 
@@ -272,7 +277,7 @@ function MemberRow({
         <span className="text-sm font-medium text-gray-900">{member.name}</span>
         {member.skills.length > 0 && (
           <span className="ml-2 text-xs text-gray-500">
-            {member.skills.join(", ")}
+            · {member.skills.join(", ")}
           </span>
         )}
       </div>

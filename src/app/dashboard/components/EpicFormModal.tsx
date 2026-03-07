@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { X } from "lucide-react";
+import { Modal } from "./Modal";
 import type { Epic, EpicSize, EpicPriority } from "@/lib/types";
 import { SIZES, PRIORITIES, SIZE_TO_DAYS, PRIORITY_LABELS } from "@/lib/constants";
 
@@ -41,8 +42,7 @@ export function EpicFormModal({ epic, onClose, onSubmit }: Props) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="mx-4 w-full max-w-md rounded-lg bg-white shadow-xl">
+    <Modal onClose={onClose}>
         <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4">
           <h2 className="text-lg font-semibold text-gray-900">
             {epic ? "Edit Epic" : "Add Epic"}
@@ -50,6 +50,7 @@ export function EpicFormModal({ epic, onClose, onSubmit }: Props) {
           <button
             onClick={onClose}
             className="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+            aria-label="Close"
           >
             <X className="h-5 w-5" />
           </button>
@@ -58,10 +59,11 @@ export function EpicFormModal({ epic, onClose, onSubmit }: Props) {
         <form onSubmit={handleSubmit} className="px-6 py-4">
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label htmlFor="epic-title" className="block text-sm font-medium text-gray-700">
                 Title
               </label>
               <input
+                id="epic-title"
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
@@ -73,10 +75,11 @@ export function EpicFormModal({ epic, onClose, onSubmit }: Props) {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label htmlFor="epic-size" className="block text-sm font-medium text-gray-700">
                   Size
                 </label>
                 <select
+                  id="epic-size"
                   value={size}
                   onChange={(e) => setSize(e.target.value as EpicSize)}
                   className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
@@ -89,10 +92,11 @@ export function EpicFormModal({ epic, onClose, onSubmit }: Props) {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label htmlFor="epic-priority" className="block text-sm font-medium text-gray-700">
                   Priority
                 </label>
                 <select
+                  id="epic-priority"
                   value={priority}
                   onChange={(e) => setPriority(e.target.value as EpicPriority)}
                   className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
@@ -107,10 +111,11 @@ export function EpicFormModal({ epic, onClose, onSubmit }: Props) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label htmlFor="epic-description" className="block text-sm font-medium text-gray-700">
                 Description
               </label>
               <textarea
+                id="epic-description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 rows={3}
@@ -120,10 +125,11 @@ export function EpicFormModal({ epic, onClose, onSubmit }: Props) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label htmlFor="epic-owner" className="block text-sm font-medium text-gray-700">
                 Owner
               </label>
               <input
+                id="epic-owner"
                 type="text"
                 value={owner}
                 onChange={(e) => setOwner(e.target.value)}
@@ -150,7 +156,6 @@ export function EpicFormModal({ epic, onClose, onSubmit }: Props) {
             </button>
           </div>
         </form>
-      </div>
-    </div>
+    </Modal>
   );
 }

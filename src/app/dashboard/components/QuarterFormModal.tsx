@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { X } from "lucide-react";
+import { Modal } from "./Modal";
 import type { Quarter, QuarterStatus } from "@/lib/types";
 
 type Props = {
@@ -50,8 +51,7 @@ export function QuarterFormModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="mx-4 w-full max-w-md rounded-lg bg-white shadow-xl">
+    <Modal onClose={onClose}>
         <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4">
           <h2 className="text-lg font-semibold text-gray-900">
             {quarter ? "Edit Quarter" : "Create Quarter"}
@@ -59,6 +59,7 @@ export function QuarterFormModal({
           <button
             onClick={onClose}
             className="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+            aria-label="Close"
           >
             <X className="h-5 w-5" />
           </button>
@@ -67,10 +68,11 @@ export function QuarterFormModal({
         <form onSubmit={handleSubmit} className="px-6 py-4">
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label htmlFor="quarter-name" className="block text-sm font-medium text-gray-700">
                 Name
               </label>
               <input
+                id="quarter-name"
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -82,10 +84,11 @@ export function QuarterFormModal({
 
             {quarter && (
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label htmlFor="quarter-status" className="block text-sm font-medium text-gray-700">
                   Status
                 </label>
                 <select
+                  id="quarter-status"
                   value={status}
                   onChange={(e) => setStatus(e.target.value as QuarterStatus)}
                   className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
@@ -98,10 +101,11 @@ export function QuarterFormModal({
             )}
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label htmlFor="quarter-working-days" className="block text-sm font-medium text-gray-700">
                 Working days
               </label>
               <input
+                id="quarter-working-days"
                 type="number"
                 min={1}
                 value={workingDays}
@@ -112,10 +116,11 @@ export function QuarterFormModal({
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label htmlFor="quarter-start-date" className="block text-sm font-medium text-gray-700">
                   Start date
                 </label>
                 <input
+                  id="quarter-start-date"
                   type="date"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
@@ -123,10 +128,11 @@ export function QuarterFormModal({
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label htmlFor="quarter-end-date" className="block text-sm font-medium text-gray-700">
                   End date
                 </label>
                 <input
+                  id="quarter-end-date"
                   type="date"
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
@@ -153,7 +159,6 @@ export function QuarterFormModal({
             </button>
           </div>
         </form>
-      </div>
-    </div>
+    </Modal>
   );
 }

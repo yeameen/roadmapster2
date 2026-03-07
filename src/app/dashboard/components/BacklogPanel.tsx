@@ -34,7 +34,7 @@ export function BacklogPanel({ epics, onAddEpic, onEditEpic, onDeleteEpic }: Pro
 
       <div
         ref={setNodeRef}
-        className={`min-h-[200px] rounded-lg border-2 border-dashed p-3 transition-colors ${
+        className={`min-h-[120px] rounded-lg border-2 border-dashed p-3 transition-colors ${
           isOver ? "border-blue-400 bg-blue-50" : "border-transparent"
         }`}
       >
@@ -81,7 +81,7 @@ function PriorityGroup({
 }) {
   return (
     <div>
-      <h4 className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-gray-500">
+      <h4 className="mb-1.5 text-xs font-semibold text-gray-500">
         {priority} — {PRIORITY_LABELS[priority]} ({epics.length})
       </h4>
       <div className="space-y-1.5">

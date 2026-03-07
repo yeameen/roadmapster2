@@ -33,7 +33,7 @@ export default async function DashboardPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="border-b border-gray-200 bg-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+        <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-4">
           <div>
             <h1 className="text-lg font-semibold text-gray-900">
               Roadmapster
@@ -43,12 +43,12 @@ export default async function DashboardPage() {
             )}
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-sm text-gray-600">{user.email}</span>
+            <span className="hidden text-sm text-gray-600 sm:inline">{user.email}</span>
             <SignOutButton />
           </div>
         </div>
       </header>
-      <main className="mx-auto max-w-7xl px-6 py-8">
+      <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
         {membership ? (
           <DashboardClient workspaceId={membership.workspace_id} />
         ) : (

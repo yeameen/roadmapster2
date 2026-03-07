@@ -60,6 +60,7 @@ export function QuarterCard({
             <button
               onClick={() => setCollapsed(!collapsed)}
               className="rounded p-0.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+              aria-label={collapsed ? "Expand quarter" : "Collapse quarter"}
             >
               {collapsed ? (
                 <ChevronRight className="h-4 w-4" />
@@ -86,6 +87,7 @@ export function QuarterCard({
               onClick={() => onQuarterMembers(quarter)}
               className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
               title="Member availability"
+              aria-label="Member availability"
             >
               <Users className="h-4 w-4" />
             </button>
@@ -93,6 +95,7 @@ export function QuarterCard({
               onClick={() => onEditQuarter(quarter)}
               className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
               title="Edit quarter"
+              aria-label="Edit quarter"
             >
               <Pencil className="h-4 w-4" />
             </button>
@@ -100,6 +103,7 @@ export function QuarterCard({
               onClick={() => onDeleteQuarter(quarter.id)}
               className="rounded p-1 text-gray-400 hover:bg-red-50 hover:text-red-600"
               title="Delete quarter"
+              aria-label="Delete quarter"
             >
               <Trash2 className="h-4 w-4" />
             </button>

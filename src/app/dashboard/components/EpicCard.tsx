@@ -29,6 +29,7 @@ export function EpicCardContent({
     >
       <button
         className="shrink-0 cursor-grab touch-none text-gray-400 hover:text-gray-600"
+        aria-label="Reorder"
         {...dragHandleProps}
       >
         <GripVertical className="h-4 w-4" />
@@ -53,12 +54,16 @@ export function EpicCardContent({
           <button
             onClick={() => onEdit(epic)}
             className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+            aria-label="Edit epic"
+            title="Edit epic"
           >
             <Pencil className="h-3.5 w-3.5" />
           </button>
           <button
             onClick={() => onDelete(epic.id)}
             className="rounded p-1 text-gray-400 hover:bg-red-50 hover:text-red-600"
+            aria-label="Delete epic"
+            title="Delete epic"
           >
             <Trash2 className="h-3.5 w-3.5" />
           </button>

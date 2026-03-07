@@ -1,6 +1,7 @@
 "use client";
 
 import { X } from "lucide-react";
+import { Modal } from "./Modal";
 import type { PlanningMember, QuarterMember } from "@/lib/types";
 
 type Props = {
@@ -23,8 +24,7 @@ export function QuarterMembersModal({
   );
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="mx-4 w-full max-w-md rounded-lg bg-white shadow-xl">
+    <Modal onClose={onClose}>
         <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4">
           <div>
             <h2 className="text-lg font-semibold text-gray-900">
@@ -35,6 +35,7 @@ export function QuarterMembersModal({
           <button
             onClick={onClose}
             className="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+            aria-label="Close"
           >
             <X className="h-5 w-5" />
           </button>
@@ -90,7 +91,6 @@ export function QuarterMembersModal({
             Done
           </button>
         </div>
-      </div>
-    </div>
+    </Modal>
   );
 }

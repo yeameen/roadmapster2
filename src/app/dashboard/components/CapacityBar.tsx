@@ -21,11 +21,16 @@ export function CapacityBar({ capacity }: Props) {
     textColor = "text-amber-700";
   }
 
+  const remaining = finalCapacity - usedCapacity;
+
   return (
     <div className="mt-2">
       <div className="flex items-center justify-between text-xs">
         <span className={textColor}>
           {usedCapacity} / {finalCapacity} days ({Math.round(percentage)}%)
+        </span>
+        <span className="text-gray-500">
+          {remaining} days remaining
         </span>
       </div>
       <div className="mt-1 h-2 w-full rounded-full bg-gray-200">
