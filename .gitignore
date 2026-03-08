@@ -15,6 +15,9 @@
 /test-results
 /.playwright-mcp
 
+# screenshots
+/screenshots
+
 # next.js
 /.next/
 /out/
