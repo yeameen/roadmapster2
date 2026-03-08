@@ -4,8 +4,10 @@ import { useState } from "react";
 
 export function CreateTeamForm({
   onSubmit,
+  title = "Create a team",
 }: {
   onSubmit: (name: string) => Promise<void>;
+  title?: string;
 }) {
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
@@ -21,7 +23,7 @@ export function CreateTeamForm({
   return (
     <div className="mx-auto max-w-md rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-8 shadow-warm">
       <h2 className="text-lg font-semibold text-stone-900 dark:text-white">
-        Create your first team
+        {title}
       </h2>
       <p className="mt-1 text-sm text-stone-500 dark:text-stone-400">
         A team owns a roadmap. You can configure capacity settings after

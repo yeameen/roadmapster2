@@ -5,13 +5,13 @@ import { createClient } from "@/lib/supabase/client";
 import type { Team } from "@/lib/types";
 import { TEAM_DEFAULTS } from "@/lib/constants";
 
-export function useTeam(workspaceId: string | null) {
-  const [team, setTeam] = useState<Team | null>(null);
+export function useTeams(workspaceId: string | null) {
+  const [teams, setTeams] = useState<Team[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const supabase = createClient();
 
-  const fetchTeam = useCallback(async () => {
+  const fetchTeams = useCallback(async () => {
     if (!workspaceId) {
       setLoading(false);
       return;
@@ -21,22 +21,21 @@ export function useTeam(workspaceId: string | null) {
       .from("teams")
       .select("*")
       .eq("workspace_id", workspaceId)
-      .limit(1)
-      .single();
+      .order("created_at", { ascending: true });
 
-    if (fetchError && fetchError.code !== "PGRST116") {
+    if (fetchError) {
       setError(fetchError.message);
     }
-    setTeam(data);
+    setTeams(data ?? []);
     setLoading(false);
   }, [workspaceId, supabase]);
 
   useEffect(() => {
-    fetchTeam();
-  }, [fetchTeam]);
+    fetchTeams();
+  }, [fetchTeams]);
 
   const createTeam = useCallback(
-    async (name: string) => {
+    async (name: string): Promise<Team | null> => {
       if (!workspaceId) return null;
 
       const {
@@ -59,31 +58,39 @@ export function useTeam(workspaceId: string | null) {
         return null;
       }
 
-      await fetchTeam();
-      return team;
+      // Query the newly created team by name (most recent)
+      const { data: newTeam } = await supabase
+        .from("teams")
+        .select("*")
+        .eq("workspace_id", workspaceId)
+        .eq("name", name)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .single();
+
+      await fetchTeams();
+      return newTeam;
     },
-    [workspaceId, supabase, fetchTeam, team]
+    [workspaceId, supabase, fetchTeams]
   );
 
   const updateTeam = useCallback(
-    async (updates: Partial<Pick<Team, "name" | "buffer_percentage" | "oncall_per_sprint" | "sprints_per_quarter" | "default_working_days">>) => {
-      if (!team) return;
-
+    async (teamId: string, updates: Partial<Pick<Team, "name" | "buffer_percentage" | "oncall_per_sprint" | "sprints_per_quarter" | "default_working_days">>) => {
       // Optimistic update
-      setTeam({ ...team, ...updates });
+      setTeams((prev) => prev.map((t) => (t.id === teamId ? { ...t, ...updates } : t)));
 
       const { error: updateError } = await supabase
         .from("teams")
         .update(updates)
-        .eq("id", team.id);
+        .eq("id", teamId);
 
       if (updateError) {
         setError(updateError.message);
-        await fetchTeam(); // Revert on error
+        await fetchTeams(); // Revert on error
       }
     },
-    [team, supabase, fetchTeam]
+    [supabase, fetchTeams]
   );
 
-  return { team, loading, error, createTeam, updateTeam, refetch: fetchTeam };
+  return { teams, loading, error, createTeam, updateTeam, refetch: fetchTeams };
 }
