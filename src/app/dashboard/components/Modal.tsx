@@ -50,7 +50,7 @@ export function Modal({ onClose, children, maxWidth = "max-w-md" }: Props) {
       <div
         ref={panelRef}
         tabIndex={-1}
-        className={`modal-panel mx-4 w-full ${maxWidth} rounded-lg bg-white shadow-xl outline-none`}
+        className={`modal-panel mx-4 w-full ${maxWidth} rounded-lg bg-white dark:bg-gray-900 shadow-xl dark:shadow-black/40 outline-none`}
         onClick={(e) => e.stopPropagation()}
       >
         {children}

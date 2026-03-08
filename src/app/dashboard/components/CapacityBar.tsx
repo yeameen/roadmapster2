@@ -12,13 +12,13 @@ export function CapacityBar({ capacity }: Props) {
   const percentage = Math.min(utilization * 100, 100);
 
   let barColor = "bg-green-500";
-  let textColor = "text-green-700";
+  let textColor = "text-green-700 dark:text-green-400";
   if (utilization > CAPACITY_THRESHOLDS.AMBER_MAX) {
     barColor = "bg-red-500";
-    textColor = "text-red-700";
+    textColor = "text-red-700 dark:text-red-400";
   } else if (utilization > CAPACITY_THRESHOLDS.GREEN_MAX) {
     barColor = "bg-amber-500";
-    textColor = "text-amber-700";
+    textColor = "text-amber-700 dark:text-amber-400";
   }
 
   const remaining = finalCapacity - usedCapacity;
@@ -29,11 +29,11 @@ export function CapacityBar({ capacity }: Props) {
         <span className={textColor}>
           {usedCapacity} / {finalCapacity} days ({Math.round(percentage)}%)
         </span>
-        <span className="text-gray-500">
+        <span className="text-gray-500 dark:text-gray-400">
           {remaining} days remaining
         </span>
       </div>
-      <div className="mt-1 h-2 w-full rounded-full bg-gray-200">
+      <div className="mt-1 h-2 w-full rounded-full bg-gray-200 dark:bg-gray-700">
         <div
           className={`h-2 rounded-full ${barColor} transition-all`}
           style={{ width: `${percentage}%` }}

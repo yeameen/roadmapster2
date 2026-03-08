@@ -54,13 +54,13 @@ export function TeamSettingsModal({
 
   return (
     <Modal onClose={onClose} maxWidth="max-w-lg">
-        <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4">
-          <h2 className="text-lg font-semibold text-gray-900">
+        <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
             Team Settings
           </h2>
           <button
             onClick={onClose}
-            className="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+            className="rounded-md p-1 text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-600 dark:hover:text-gray-300"
             aria-label="Close"
           >
             <X className="h-5 w-5" />
@@ -71,7 +71,7 @@ export function TeamSettingsModal({
           {/* Team settings */}
           <div className="space-y-4">
             <div>
-              <label htmlFor="team-name" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="team-name" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Team name
               </label>
               <input
@@ -79,13 +79,13 @@ export function TeamSettingsModal({
                 type="text"
                 value={teamName}
                 onChange={(e) => setTeamName(e.target.value)}
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm text-gray-900 dark:text-white shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label htmlFor="buffer-pct" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="buffer-pct" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   Buffer %
                 </label>
                 <input
@@ -95,11 +95,11 @@ export function TeamSettingsModal({
                   max={100}
                   value={bufferPct}
                   onChange={(e) => setBufferPct(Number(e.target.value))}
-                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm text-gray-900 dark:text-white shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 />
               </div>
               <div>
-                <label htmlFor="oncall" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="oncall" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   On-call / sprint
                 </label>
                 <input
@@ -108,11 +108,11 @@ export function TeamSettingsModal({
                   min={0}
                   value={oncall}
                   onChange={(e) => setOncall(Number(e.target.value))}
-                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm text-gray-900 dark:text-white shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 />
               </div>
               <div>
-                <label htmlFor="sprints" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="sprints" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   Sprints / quarter
                 </label>
                 <input
@@ -121,11 +121,11 @@ export function TeamSettingsModal({
                   min={1}
                   value={sprints}
                   onChange={(e) => setSprints(Number(e.target.value))}
-                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm text-gray-900 dark:text-white shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 />
               </div>
               <div>
-                <label htmlFor="working-days" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="working-days" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   Working days / quarter
                 </label>
                 <input
@@ -134,18 +134,18 @@ export function TeamSettingsModal({
                   min={1}
                   value={workingDays}
                   onChange={(e) => setWorkingDays(Number(e.target.value))}
-                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm text-gray-900 dark:text-white shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 />
               </div>
             </div>
           </div>
 
           {/* Planning members */}
-          <div className="mt-6 border-t border-gray-200 pt-4">
-            <h3 className="text-sm font-semibold text-gray-900">
+          <div className="mt-6 border-t border-gray-200 dark:border-gray-700 pt-4">
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
               Planning Members
             </h3>
-            <p className="mt-1 text-xs text-gray-500">
+            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
               People counted in capacity calculations. They don&apos;t need a
               login.
             </p>
@@ -159,7 +159,7 @@ export function TeamSettingsModal({
                 value={newMemberName}
                 onChange={(e) => setNewMemberName(e.target.value)}
                 placeholder="Member name"
-                className="block w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="block w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-1.5 text-sm text-gray-900 dark:text-white shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
               <button
                 type="submit"
@@ -181,7 +181,7 @@ export function TeamSettingsModal({
                 />
               ))}
               {members.length === 0 && (
-                <li className="py-3 text-center text-sm text-gray-400">
+                <li className="py-3 text-center text-sm text-gray-400 dark:text-gray-500">
                   No planning members yet
                 </li>
               )}
@@ -189,10 +189,10 @@ export function TeamSettingsModal({
           </div>
         </div>
 
-        <div className="flex justify-end border-t border-gray-200 px-6 py-4">
+        <div className="flex justify-end border-t border-gray-200 dark:border-gray-700 px-6 py-4">
           <button
             onClick={onClose}
-            className="mr-3 rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+            className="mr-3 rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
           >
             Cancel
           </button>
@@ -232,26 +232,26 @@ function MemberRow({
 
   if (editing) {
     return (
-      <li className="rounded-md border border-blue-200 bg-blue-50 p-3">
+      <li className="rounded-md border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20 p-3">
         <div className="space-y-2">
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="block w-full rounded-md border border-gray-300 px-2 py-1 text-sm text-gray-900"
+            className="block w-full rounded-md border border-gray-300 dark:border-gray-600 px-2 py-1 text-sm text-gray-900 dark:text-white"
             placeholder="Name"
           />
           <input
             type="text"
             value={skillsInput}
             onChange={(e) => setSkillsInput(e.target.value)}
-            className="block w-full rounded-md border border-gray-300 px-2 py-1 text-sm text-gray-900"
+            className="block w-full rounded-md border border-gray-300 dark:border-gray-600 px-2 py-1 text-sm text-gray-900 dark:text-white"
             placeholder="Skills (comma-separated)"
           />
           <div className="flex gap-2">
             <button
               onClick={handleSave}
-              className="rounded px-2 py-1 text-xs font-medium text-blue-700 hover:bg-blue-100"
+              className="rounded px-2 py-1 text-xs font-medium text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-800"
             >
               Save
             </button>
@@ -261,7 +261,7 @@ function MemberRow({
                 setSkillsInput(member.skills.join(", "));
                 setEditing(false);
               }}
-              className="rounded px-2 py-1 text-xs font-medium text-gray-500 hover:bg-gray-100"
+              className="rounded px-2 py-1 text-xs font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
             >
               Cancel
             </button>
@@ -272,11 +272,11 @@ function MemberRow({
   }
 
   return (
-    <li className="flex items-center justify-between rounded-md border border-gray-200 px-3 py-2">
+    <li className="flex items-center justify-between rounded-md border border-gray-200 dark:border-gray-700 px-3 py-2">
       <div>
-        <span className="text-sm font-medium text-gray-900">{member.name}</span>
+        <span className="text-sm font-medium text-gray-900 dark:text-white">{member.name}</span>
         {member.skills.length > 0 && (
-          <span className="ml-2 text-xs text-gray-500">
+          <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">
             · {member.skills.join(", ")}
           </span>
         )}
@@ -284,13 +284,13 @@ function MemberRow({
       <div className="flex items-center gap-1">
         <button
           onClick={() => setEditing(true)}
-          className="rounded px-2 py-1 text-xs text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+          className="rounded px-2 py-1 text-xs text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300"
         >
           Edit
         </button>
         <button
           onClick={() => onRemove(member.id)}
-          className="rounded p-1 text-gray-400 hover:bg-red-50 hover:text-red-600"
+          className="rounded p-1 text-gray-400 dark:text-gray-500 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400"
         >
           <Trash2 className="h-3.5 w-3.5" />
         </button>

@@ -50,8 +50,8 @@ export function QuarterCard({
 
   return (
     <div
-      className={`rounded-lg border bg-white transition-colors ${
-        isOver ? "border-blue-400 ring-1 ring-blue-200" : "border-gray-200"
+      className={`rounded-lg border bg-white dark:bg-gray-900 transition-colors ${
+        isOver ? "border-blue-400 dark:border-blue-500 ring-1 ring-blue-200 dark:ring-blue-800" : "border-gray-200 dark:border-gray-700"
       }`}
     >
       <div className="p-4">
@@ -59,7 +59,7 @@ export function QuarterCard({
           <div className="flex items-center gap-2">
             <button
               onClick={() => setCollapsed(!collapsed)}
-              className="rounded p-0.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+              className="rounded p-0.5 text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-600 dark:hover:text-gray-300"
               aria-label={collapsed ? "Expand quarter" : "Collapse quarter"}
             >
               {collapsed ? (
@@ -70,14 +70,14 @@ export function QuarterCard({
             </button>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-medium text-gray-900">{quarter.name}</span>
+                <span className="font-medium text-gray-900 dark:text-white">{quarter.name}</span>
                 <span
                   className={`rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_COLORS[quarter.status]}`}
                 >
                   {quarter.status}
                 </span>
               </div>
-              <p className="mt-0.5 text-xs text-gray-500">
+              <p className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">
                 {epics.length} epic{epics.length !== 1 ? "s" : ""}
               </p>
             </div>
@@ -85,7 +85,7 @@ export function QuarterCard({
           <div className="flex items-center gap-1">
             <button
               onClick={() => onQuarterMembers(quarter)}
-              className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+              className="rounded p-1 text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-600 dark:hover:text-gray-300"
               title="Member availability"
               aria-label="Member availability"
             >
@@ -93,7 +93,7 @@ export function QuarterCard({
             </button>
             <button
               onClick={() => onEditQuarter(quarter)}
-              className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+              className="rounded p-1 text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-600 dark:hover:text-gray-300"
               title="Edit quarter"
               aria-label="Edit quarter"
             >
@@ -101,7 +101,7 @@ export function QuarterCard({
             </button>
             <button
               onClick={() => onDeleteQuarter(quarter.id)}
-              className="rounded p-1 text-gray-400 hover:bg-red-50 hover:text-red-600"
+              className="rounded p-1 text-gray-400 dark:text-gray-500 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400"
               title="Delete quarter"
               aria-label="Delete quarter"
             >
@@ -116,13 +116,13 @@ export function QuarterCard({
       {!collapsed && (
         <div
           ref={setNodeRef}
-          className={`min-h-[48px] border-t border-gray-100 px-4 py-3 ${
-            isOver ? "bg-blue-50/50" : ""
+          className={`min-h-[48px] border-t border-gray-100 dark:border-gray-800 px-4 py-3 ${
+            isOver ? "bg-blue-50/50 dark:bg-blue-900/20" : ""
           }`}
         >
           <SortableContext items={sortableIds} strategy={verticalListSortingStrategy}>
             {epics.length === 0 ? (
-              <p className="py-2 text-center text-xs text-gray-400">
+              <p className="py-2 text-center text-xs text-gray-400 dark:text-gray-500">
                 Drop epics here
               </p>
             ) : (
