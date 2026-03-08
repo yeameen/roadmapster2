@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useCallback } from "react";
+import { createPortal } from "react-dom";
 
 type Props = {
   onClose: () => void;
@@ -39,7 +40,7 @@ export function Modal({ onClose, children, maxWidth = "max-w-md" }: Props) {
     };
   }, [handleKeyDown]);
 
-  return (
+  return createPortal(
     <div
       className="modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-black/50"
       onClick={onClose}
@@ -54,6 +55,7 @@ export function Modal({ onClose, children, maxWidth = "max-w-md" }: Props) {
       >
         {children}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
