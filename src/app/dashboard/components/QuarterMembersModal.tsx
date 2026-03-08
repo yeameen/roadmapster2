@@ -72,7 +72,7 @@ export function QuarterMembersModal({
                           }
                         }}
                         disabled={!qm}
-                        className="w-20 rounded-md border border-gray-300 px-2 py-1 text-right text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100"
+                        className="w-20 rounded-md border border-gray-300 px-2 py-1 text-right text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100"
                       />
                       <span className="text-xs text-gray-500">days off</span>
                     </div>

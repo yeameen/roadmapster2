@@ -69,7 +69,7 @@ export function EpicFormModal({ epic, onClose, onSubmit }: Props) {
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="e.g. Migrate auth to SSO"
                 required
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
             </div>
 
@@ -82,7 +82,7 @@ export function EpicFormModal({ epic, onClose, onSubmit }: Props) {
                   id="epic-size"
                   value={size}
                   onChange={(e) => setSize(e.target.value as EpicSize)}
-                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 >
                   {SIZES.map((s) => (
                     <option key={s} value={s}>
@@ -99,7 +99,7 @@ export function EpicFormModal({ epic, onClose, onSubmit }: Props) {
                   id="epic-priority"
                   value={priority}
                   onChange={(e) => setPriority(e.target.value as EpicPriority)}
-                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 >
                   {PRIORITIES.map((p) => (
                     <option key={p} value={p}>
@@ -120,7 +120,7 @@ export function EpicFormModal({ epic, onClose, onSubmit }: Props) {
                 onChange={(e) => setDescription(e.target.value)}
                 rows={3}
                 placeholder="Optional description..."
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
             </div>
 
@@ -134,7 +134,7 @@ export function EpicFormModal({ epic, onClose, onSubmit }: Props) {
                 value={owner}
                 onChange={(e) => setOwner(e.target.value)}
                 placeholder="Optional owner name"
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
             </div>
           </div>

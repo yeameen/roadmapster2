@@ -79,7 +79,7 @@ export function TeamSettingsModal({
                 type="text"
                 value={teamName}
                 onChange={(e) => setTeamName(e.target.value)}
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
             </div>
 
@@ -95,7 +95,7 @@ export function TeamSettingsModal({
                   max={100}
                   value={bufferPct}
                   onChange={(e) => setBufferPct(Number(e.target.value))}
-                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 />
               </div>
               <div>
@@ -108,7 +108,7 @@ export function TeamSettingsModal({
                   min={0}
                   value={oncall}
                   onChange={(e) => setOncall(Number(e.target.value))}
-                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 />
               </div>
               <div>
@@ -121,7 +121,7 @@ export function TeamSettingsModal({
                   min={1}
                   value={sprints}
                   onChange={(e) => setSprints(Number(e.target.value))}
-                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 />
               </div>
               <div>
@@ -134,7 +134,7 @@ export function TeamSettingsModal({
                   min={1}
                   value={workingDays}
                   onChange={(e) => setWorkingDays(Number(e.target.value))}
-                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 />
               </div>
             </div>
@@ -159,7 +159,7 @@ export function TeamSettingsModal({
                 value={newMemberName}
                 onChange={(e) => setNewMemberName(e.target.value)}
                 placeholder="Member name"
-                className="block w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="block w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
               <button
                 type="submit"
@@ -238,14 +238,14 @@ function MemberRow({
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="block w-full rounded-md border border-gray-300 px-2 py-1 text-sm"
+            className="block w-full rounded-md border border-gray-300 px-2 py-1 text-sm text-gray-900"
             placeholder="Name"
           />
           <input
             type="text"
             value={skillsInput}
             onChange={(e) => setSkillsInput(e.target.value)}
-            className="block w-full rounded-md border border-gray-300 px-2 py-1 text-sm"
+            className="block w-full rounded-md border border-gray-300 px-2 py-1 text-sm text-gray-900"
             placeholder="Skills (comma-separated)"
           />
           <div className="flex gap-2">
