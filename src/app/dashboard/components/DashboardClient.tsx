@@ -219,7 +219,6 @@ export function DashboardClient({ workspaceId }: { workspaceId: string }) {
           {showQuarterForm && (
             <QuarterFormModal
               quarter={editingQuarter ?? undefined}
-              defaultWorkingDays={activeTeam.default_working_days}
               onClose={() => { setShowQuarterForm(false); setEditingQuarter(null); }}
               onSubmit={async (fields) => {
                 if (editingQuarter) {

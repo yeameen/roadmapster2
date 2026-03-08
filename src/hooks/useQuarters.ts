@@ -35,7 +35,7 @@ export function useQuarters(teamId: string | null) {
   }, [fetchQuarters]);
 
   const createQuarter = useCallback(
-    async (fields: { name: string; working_days: number; start_date?: string; end_date?: string }) => {
+    async (fields: { name: string; working_days: number; start_date: string; end_date: string; holidays?: string[] }) => {
       if (!teamId) return null;
 
       const nextOrder = quarters.length > 0
@@ -46,8 +46,9 @@ export function useQuarters(teamId: string | null) {
         team_id: teamId,
         name: fields.name,
         working_days: fields.working_days,
-        start_date: fields.start_date || null,
-        end_date: fields.end_date || null,
+        start_date: fields.start_date,
+        end_date: fields.end_date,
+        holidays: fields.holidays ?? [],
         display_order: nextOrder,
         status: "planning",
       });
@@ -64,7 +65,7 @@ export function useQuarters(teamId: string | null) {
   );
 
   const updateQuarter = useCallback(
-    async (id: string, updates: Partial<Pick<Quarter, "name" | "status" | "working_days" | "start_date" | "end_date" | "display_order">>) => {
+    async (id: string, updates: Partial<Pick<Quarter, "name" | "status" | "working_days" | "start_date" | "end_date" | "holidays" | "display_order">>) => {
       setQuarters((prev) =>
         prev.map((q) => (q.id === id ? { ...q, ...updates } : q))
       );

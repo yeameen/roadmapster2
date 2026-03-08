@@ -44,8 +44,9 @@ export type Quarter = {
   name: string;
   status: QuarterStatus;
   working_days: number;
-  start_date: string | null;
-  end_date: string | null;
+  start_date: string;
+  end_date: string;
+  holidays: string[];
   display_order: number;
   created_at: string;
   updated_at: string;
