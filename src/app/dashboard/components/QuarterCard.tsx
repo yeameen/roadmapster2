@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { useDroppable } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { ChevronDown, ChevronRight, Pencil, Trash2, Users } from "lucide-react";
+import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { SortableEpicCard } from "./EpicCard";
 import { CapacityBar } from "./CapacityBar";
 import { calculateCapacity } from "@/lib/capacity";
@@ -34,6 +35,7 @@ export function QuarterCard({
   onDeleteEpic,
 }: Props) {
   const [collapsed, setCollapsed] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const droppableId = `${DROPPABLE_IDS.QUARTER_PREFIX}${quarter.id}`;
   const { setNodeRef, isOver } = useDroppable({ id: droppableId });
 
@@ -49,6 +51,7 @@ export function QuarterCard({
   }), [quarter.working_days, quarterMembers, team.buffer_percentage, team.oncall_per_sprint, team.sprints_per_quarter, epics]);
 
   return (
+    <>
     <div
       className={`rounded-2xl border bg-white dark:bg-stone-900 shadow-warm transition-colors ${
         isOver ? "border-amber-400 dark:border-amber-500 ring-1 ring-amber-200 dark:ring-amber-800" : "border-stone-200 dark:border-stone-700"
@@ -100,7 +103,7 @@ export function QuarterCard({
               <Pencil className="h-4 w-4" />
             </button>
             <button
-              onClick={() => onDeleteQuarter(quarter.id)}
+              onClick={() => setConfirmDelete(true)}
               className="rounded-lg p-1 text-stone-400 dark:text-stone-500 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400"
               title="Delete quarter"
               aria-label="Delete quarter"
@@ -141,5 +144,17 @@ export function QuarterCard({
         </div>
       )}
     </div>
+    {confirmDelete && (
+      <ConfirmDialog
+        title="Delete quarter"
+        message={`Are you sure you want to delete "${quarter.name}"? All epics in this quarter will be moved to the backlog.`}
+        onConfirm={() => {
+          onDeleteQuarter(quarter.id);
+          setConfirmDelete(false);
+        }}
+        onCancel={() => setConfirmDelete(false)}
+      />
+    )}
+    </>
   );
 }

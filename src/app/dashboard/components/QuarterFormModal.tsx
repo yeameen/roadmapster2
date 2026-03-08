@@ -78,7 +78,7 @@ export function QuarterFormModal({
                 onChange={(e) => setName(e.target.value)}
                 placeholder="e.g. Q2 2026"
                 required
-                className="mt-1 block w-full rounded-xl border border-stone-300 dark:border-stone-600 px-3 py-2 text-sm text-stone-900 dark:text-white shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                className="mt-1 block w-full rounded-xl border border-stone-300 dark:border-stone-600 bg-white dark:bg-stone-800 px-3 py-2 text-sm text-stone-900 dark:text-white shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
               />
             </div>
 
@@ -91,7 +91,7 @@ export function QuarterFormModal({
                   id="quarter-status"
                   value={status}
                   onChange={(e) => setStatus(e.target.value as QuarterStatus)}
-                  className="mt-1 block w-full rounded-xl border border-stone-300 dark:border-stone-600 px-3 py-2 text-sm text-stone-900 dark:text-white shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                  className="mt-1 block w-full rounded-xl border border-stone-300 dark:border-stone-600 bg-white dark:bg-stone-800 px-3 py-2 text-sm text-stone-900 dark:text-white shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
                 >
                   <option value="planning">Planning</option>
                   <option value="active">Active</option>
@@ -110,7 +110,7 @@ export function QuarterFormModal({
                 min={1}
                 value={workingDays}
                 onChange={(e) => setWorkingDays(Number(e.target.value))}
-                className="mt-1 block w-full rounded-xl border border-stone-300 dark:border-stone-600 px-3 py-2 text-sm text-stone-900 dark:text-white shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                className="mt-1 block w-full rounded-xl border border-stone-300 dark:border-stone-600 bg-white dark:bg-stone-800 px-3 py-2 text-sm text-stone-900 dark:text-white shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
               />
             </div>
 
@@ -124,7 +124,7 @@ export function QuarterFormModal({
                   type="date"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
-                  className="mt-1 block w-full rounded-xl border border-stone-300 dark:border-stone-600 px-3 py-2 text-sm text-stone-900 dark:text-white shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                  className="mt-1 block w-full rounded-xl border border-stone-300 dark:border-stone-600 bg-white dark:bg-stone-800 px-3 py-2 text-sm text-stone-900 dark:text-white shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
                 />
               </div>
               <div>
@@ -136,7 +136,7 @@ export function QuarterFormModal({
                   type="date"
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
-                  className="mt-1 block w-full rounded-xl border border-stone-300 dark:border-stone-600 px-3 py-2 text-sm text-stone-900 dark:text-white shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                  className="mt-1 block w-full rounded-xl border border-stone-300 dark:border-stone-600 bg-white dark:bg-stone-800 px-3 py-2 text-sm text-stone-900 dark:text-white shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
                 />
               </div>
             </div>
@@ -153,7 +153,7 @@ export function QuarterFormModal({
             <button
               type="submit"
               disabled={saving || !name.trim()}
-              className="rounded-xl bg-amber-500 px-4 py-2 text-sm font-medium text-white hover:bg-amber-600 disabled:opacity-50"
+              className="rounded-xl bg-amber-500 px-4 py-2 text-sm font-medium text-stone-900 hover:bg-amber-600 disabled:opacity-60"
             >
               {saving ? "Saving..." : quarter ? "Save" : "Create"}
             </button>

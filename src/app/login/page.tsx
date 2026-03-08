@@ -56,6 +56,7 @@ export default function LoginPage() {
               id="email"
               name="email"
               type="email"
+              autoComplete="email"
               required
               className="mt-1 block w-full rounded-xl border border-stone-300 dark:border-stone-600 bg-white dark:bg-stone-800 px-3 py-2 text-sm text-stone-900 dark:text-white shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
             />
@@ -71,6 +72,7 @@ export default function LoginPage() {
               id="password"
               name="password"
               type="password"
+              autoComplete={isSignUp ? "new-password" : "current-password"}
               required
               minLength={6}
               className="mt-1 block w-full rounded-xl border border-stone-300 dark:border-stone-600 bg-white dark:bg-stone-800 px-3 py-2 text-sm text-stone-900 dark:text-white shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
@@ -79,7 +81,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-xl bg-amber-500 px-4 py-2 text-sm font-medium text-white hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 dark:focus:ring-offset-stone-900 disabled:opacity-50"
+            className="w-full rounded-xl bg-amber-500 px-4 py-2 text-sm font-medium text-stone-900 hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 dark:focus:ring-offset-stone-900 disabled:opacity-60"
           >
             {loading
               ? "Loading..."
@@ -130,7 +132,7 @@ export default function LoginPage() {
               setIsSignUp(!isSignUp);
               setError(null);
             }}
-            className="font-medium text-amber-600 dark:text-amber-400 hover:text-amber-500 dark:hover:text-amber-400"
+            className="font-medium text-amber-700 dark:text-amber-400 hover:text-amber-600 dark:hover:text-amber-300"
           >
             {isSignUp ? "Sign in" : "Sign up"}
           </button>

@@ -48,7 +48,7 @@ export function CreateTeamForm({
         <button
           type="submit"
           disabled={loading || !name.trim()}
-          className="w-full rounded-xl bg-amber-500 px-4 py-2 text-sm font-medium text-white hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 dark:focus:ring-offset-stone-900 disabled:opacity-50"
+          className="w-full rounded-xl bg-amber-500 px-4 py-2 text-sm font-medium text-stone-900 hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 dark:focus:ring-offset-stone-900 disabled:opacity-60"
         >
           {loading ? "Creating..." : "Create team"}
         </button>

@@ -86,7 +86,7 @@ export function QuarterMembersModal({
         <div className="flex justify-end border-t border-stone-200 dark:border-stone-700 px-6 py-4">
           <button
             onClick={onClose}
-            className="rounded-xl bg-amber-500 px-4 py-2 text-sm font-medium text-white hover:bg-amber-600"
+            className="rounded-xl bg-amber-500 px-4 py-2 text-sm font-medium text-stone-900 hover:bg-amber-600"
           >
             Done
           </button>

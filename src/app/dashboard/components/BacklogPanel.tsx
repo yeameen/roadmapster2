@@ -25,7 +25,7 @@ export function BacklogPanel({ epics, onAddEpic, onEditEpic, onDeleteEpic }: Pro
         <h3 className="text-sm font-semibold text-stone-900 dark:text-white">Backlog</h3>
         <button
           onClick={onAddEpic}
-          className="flex items-center gap-1 rounded-xl bg-amber-500 px-3 py-1.5 text-sm font-medium text-white hover:bg-amber-600"
+          className="flex items-center gap-1 rounded-xl bg-amber-500 px-3 py-1.5 text-sm font-medium text-stone-900 hover:bg-amber-600"
         >
           <Plus className="h-4 w-4" />
           Add Epic
