@@ -43,13 +43,13 @@ export function EpicFormModal({ epic, onClose, onSubmit }: Props) {
 
   return (
     <Modal onClose={onClose}>
-        <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 px-6 py-4">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+        <div className="flex items-center justify-between border-b border-stone-200 dark:border-stone-700 px-6 py-4">
+          <h2 className="text-lg font-semibold text-stone-900 dark:text-white">
             {epic ? "Edit Epic" : "Add Epic"}
           </h2>
           <button
             onClick={onClose}
-            className="rounded-md p-1 text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-600 dark:hover:text-gray-300"
+            className="rounded-lg p-1 text-stone-400 dark:text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-800 hover:text-stone-600 dark:hover:text-stone-300"
             aria-label="Close"
           >
             <X className="h-5 w-5" />
@@ -59,7 +59,7 @@ export function EpicFormModal({ epic, onClose, onSubmit }: Props) {
         <form onSubmit={handleSubmit} className="px-6 py-4">
           <div className="space-y-4">
             <div>
-              <label htmlFor="epic-title" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label htmlFor="epic-title" className="block text-sm font-medium text-stone-700 dark:text-stone-300">
                 Title
               </label>
               <input
@@ -69,20 +69,20 @@ export function EpicFormModal({ epic, onClose, onSubmit }: Props) {
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="e.g. Migrate auth to SSO"
                 required
-                className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm text-gray-900 dark:text-white shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="mt-1 block w-full rounded-xl border border-stone-300 dark:border-stone-600 px-3 py-2 text-sm text-stone-900 dark:text-white shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label htmlFor="epic-size" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label htmlFor="epic-size" className="block text-sm font-medium text-stone-700 dark:text-stone-300">
                   Size
                 </label>
                 <select
                   id="epic-size"
                   value={size}
                   onChange={(e) => setSize(e.target.value as EpicSize)}
-                  className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm text-gray-900 dark:text-white shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="mt-1 block w-full rounded-xl border border-stone-300 dark:border-stone-600 px-3 py-2 text-sm text-stone-900 dark:text-white shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
                 >
                   {SIZES.map((s) => (
                     <option key={s} value={s}>
@@ -92,14 +92,14 @@ export function EpicFormModal({ epic, onClose, onSubmit }: Props) {
                 </select>
               </div>
               <div>
-                <label htmlFor="epic-priority" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label htmlFor="epic-priority" className="block text-sm font-medium text-stone-700 dark:text-stone-300">
                   Priority
                 </label>
                 <select
                   id="epic-priority"
                   value={priority}
                   onChange={(e) => setPriority(e.target.value as EpicPriority)}
-                  className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm text-gray-900 dark:text-white shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="mt-1 block w-full rounded-xl border border-stone-300 dark:border-stone-600 px-3 py-2 text-sm text-stone-900 dark:text-white shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
                 >
                   {PRIORITIES.map((p) => (
                     <option key={p} value={p}>
@@ -111,7 +111,7 @@ export function EpicFormModal({ epic, onClose, onSubmit }: Props) {
             </div>
 
             <div>
-              <label htmlFor="epic-description" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label htmlFor="epic-description" className="block text-sm font-medium text-stone-700 dark:text-stone-300">
                 Description
               </label>
               <textarea
@@ -120,12 +120,12 @@ export function EpicFormModal({ epic, onClose, onSubmit }: Props) {
                 onChange={(e) => setDescription(e.target.value)}
                 rows={3}
                 placeholder="Optional description..."
-                className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm text-gray-900 dark:text-white shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="mt-1 block w-full rounded-xl border border-stone-300 dark:border-stone-600 px-3 py-2 text-sm text-stone-900 dark:text-white shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
               />
             </div>
 
             <div>
-              <label htmlFor="epic-owner" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label htmlFor="epic-owner" className="block text-sm font-medium text-stone-700 dark:text-stone-300">
                 Owner
               </label>
               <input
@@ -134,7 +134,7 @@ export function EpicFormModal({ epic, onClose, onSubmit }: Props) {
                 value={owner}
                 onChange={(e) => setOwner(e.target.value)}
                 placeholder="Optional owner name"
-                className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm text-gray-900 dark:text-white shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="mt-1 block w-full rounded-xl border border-stone-300 dark:border-stone-600 px-3 py-2 text-sm text-stone-900 dark:text-white shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
               />
             </div>
           </div>
@@ -143,14 +143,14 @@ export function EpicFormModal({ epic, onClose, onSubmit }: Props) {
             <button
               type="button"
               onClick={onClose}
-              className="rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
+              className="rounded-xl border border-stone-300 dark:border-stone-600 px-4 py-2 text-sm font-medium text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={saving || !title.trim()}
-              className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+              className="rounded-xl bg-amber-500 px-4 py-2 text-sm font-medium text-white hover:bg-amber-600 disabled:opacity-50"
             >
               {saving ? "Saving..." : epic ? "Save" : "Add Epic"}
             </button>

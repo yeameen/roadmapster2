@@ -32,19 +32,19 @@ export default async function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
-      <header className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+    <div className="min-h-screen bg-stone-50 dark:bg-stone-950">
+      <header className="border-b border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 shadow-warm">
         <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-4">
           <div>
-            <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
+            <h1 className="text-lg font-semibold text-stone-900 dark:text-white">
               Roadmapster
             </h1>
             {workspaceName && (
-              <p className="text-sm text-gray-500 dark:text-gray-400">{workspaceName}</p>
+              <p className="text-sm text-stone-500 dark:text-stone-400">{workspaceName}</p>
             )}
           </div>
           <div className="flex items-center gap-4">
-            <span className="hidden text-sm text-gray-600 dark:text-gray-400 sm:inline">{user.email}</span>
+            <span className="hidden text-sm text-stone-600 dark:text-stone-400 sm:inline">{user.email}</span>
             <ThemeToggle />
             <SignOutButton />
           </div>
@@ -54,8 +54,8 @@ export default async function DashboardPage() {
         {membership ? (
           <DashboardClient workspaceId={membership.workspace_id} />
         ) : (
-          <div className="rounded-lg border border-dashed border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 p-12 text-center">
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+          <div className="rounded-lg border border-dashed border-stone-300 dark:border-stone-600 bg-white dark:bg-stone-900 p-12 text-center">
+            <p className="text-sm text-stone-500 dark:text-stone-400">
               No workspace found. Please sign out and sign in again.
             </p>
           </div>

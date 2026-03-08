@@ -50,8 +50,8 @@ export function QuarterCard({
 
   return (
     <div
-      className={`rounded-lg border bg-white dark:bg-gray-900 transition-colors ${
-        isOver ? "border-blue-400 dark:border-blue-500 ring-1 ring-blue-200 dark:ring-blue-800" : "border-gray-200 dark:border-gray-700"
+      className={`rounded-2xl border bg-white dark:bg-stone-900 shadow-warm transition-colors ${
+        isOver ? "border-amber-400 dark:border-amber-500 ring-1 ring-amber-200 dark:ring-amber-800" : "border-stone-200 dark:border-stone-700"
       }`}
     >
       <div className="p-4">
@@ -59,7 +59,7 @@ export function QuarterCard({
           <div className="flex items-center gap-2">
             <button
               onClick={() => setCollapsed(!collapsed)}
-              className="rounded p-0.5 text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-600 dark:hover:text-gray-300"
+              className="rounded-lg p-0.5 text-stone-400 dark:text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-800 hover:text-stone-600 dark:hover:text-stone-300"
               aria-label={collapsed ? "Expand quarter" : "Collapse quarter"}
             >
               {collapsed ? (
@@ -70,14 +70,14 @@ export function QuarterCard({
             </button>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-medium text-gray-900 dark:text-white">{quarter.name}</span>
+                <span className="font-medium text-stone-900 dark:text-white">{quarter.name}</span>
                 <span
                   className={`rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_COLORS[quarter.status]}`}
                 >
                   {quarter.status}
                 </span>
               </div>
-              <p className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">
+              <p className="mt-0.5 text-xs text-stone-500 dark:text-stone-400">
                 {epics.length} epic{epics.length !== 1 ? "s" : ""}
               </p>
             </div>
@@ -85,7 +85,7 @@ export function QuarterCard({
           <div className="flex items-center gap-1">
             <button
               onClick={() => onQuarterMembers(quarter)}
-              className="rounded p-1 text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-600 dark:hover:text-gray-300"
+              className="rounded-lg p-1 text-stone-400 dark:text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-800 hover:text-stone-600 dark:hover:text-stone-300"
               title="Member availability"
               aria-label="Member availability"
             >
@@ -93,7 +93,7 @@ export function QuarterCard({
             </button>
             <button
               onClick={() => onEditQuarter(quarter)}
-              className="rounded p-1 text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-600 dark:hover:text-gray-300"
+              className="rounded-lg p-1 text-stone-400 dark:text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-800 hover:text-stone-600 dark:hover:text-stone-300"
               title="Edit quarter"
               aria-label="Edit quarter"
             >
@@ -101,7 +101,7 @@ export function QuarterCard({
             </button>
             <button
               onClick={() => onDeleteQuarter(quarter.id)}
-              className="rounded p-1 text-gray-400 dark:text-gray-500 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400"
+              className="rounded-lg p-1 text-stone-400 dark:text-stone-500 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400"
               title="Delete quarter"
               aria-label="Delete quarter"
             >
@@ -116,13 +116,13 @@ export function QuarterCard({
       {!collapsed && (
         <div
           ref={setNodeRef}
-          className={`min-h-[48px] border-t border-gray-100 dark:border-gray-800 px-4 py-3 ${
-            isOver ? "bg-blue-50/50 dark:bg-blue-900/20" : ""
+          className={`min-h-[48px] border-t border-stone-100 dark:border-stone-800 px-4 py-3 ${
+            isOver ? "bg-amber-50/50 dark:bg-amber-900/20" : ""
           }`}
         >
           <SortableContext items={sortableIds} strategy={verticalListSortingStrategy}>
             {epics.length === 0 ? (
-              <p className="py-2 text-center text-xs text-gray-400 dark:text-gray-500">
+              <p className="py-2 text-center text-xs text-stone-400 dark:text-stone-500">
                 Drop epics here
               </p>
             ) : (

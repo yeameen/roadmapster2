@@ -9,9 +9,9 @@ export const SIZE_COLORS: Record<EpicSize, string> = {
 };
 
 export const STATUS_COLORS: Record<QuarterStatus, string> = {
-  planning: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300",
-  active: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300",
-  completed: "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400",
+  planning: "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400",
+  active: "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400",
+  completed: "bg-stone-100 text-stone-600 dark:bg-stone-800 dark:text-stone-400",
 };
 
 export const SIZE_TO_DAYS: Record<EpicSize, number> = {

@@ -1,18 +1,29 @@
 "use client";
 
-import { Sun, Moon } from "lucide-react";
+import { Sun, Moon, Monitor } from "lucide-react";
 import { useTheme } from "./ThemeProvider";
 
+const modes = ["system", "light", "dark"] as const;
+const labels = { system: "System", light: "Light", dark: "Dark" } as const;
+
 export function ThemeToggle() {
-  const { theme, toggleTheme } = useTheme();
+  const { mode, setMode } = useTheme();
+
+  function cycle() {
+    const idx = modes.indexOf(mode);
+    setMode(modes[(idx + 1) % modes.length]);
+  }
+
+  const Icon = mode === "dark" ? Moon : mode === "light" ? Sun : Monitor;
 
   return (
     <button
-      onClick={toggleTheme}
-      className="rounded-md p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200"
-      aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+      onClick={cycle}
+      className="rounded-lg p-1.5 text-stone-400 hover:bg-stone-100 hover:text-stone-600 dark:text-stone-500 dark:hover:bg-stone-800 dark:hover:text-stone-300 transition-colors"
+      aria-label={`Theme: ${labels[mode]}. Click to change.`}
+      title={`Theme: ${labels[mode]}`}
     >
-      {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+      <Icon className="h-5 w-5" />
     </button>
   );
 }

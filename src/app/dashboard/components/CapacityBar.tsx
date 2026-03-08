@@ -29,13 +29,13 @@ export function CapacityBar({ capacity }: Props) {
         <span className={textColor}>
           {usedCapacity} / {finalCapacity} days ({Math.round(percentage)}%)
         </span>
-        <span className="text-gray-500 dark:text-gray-400">
+        <span className="text-stone-500 dark:text-stone-400">
           {remaining} days remaining
         </span>
       </div>
-      <div className="mt-1 h-2 w-full rounded-full bg-gray-200 dark:bg-gray-700">
+      <div className="mt-1 h-2.5 w-full rounded-full bg-stone-200 dark:bg-stone-700">
         <div
-          className={`h-2 rounded-full ${barColor} transition-all`}
+          className={`h-2.5 rounded-full ${barColor} transition-all`}
           style={{ width: `${percentage}%` }}
         />
       </div>

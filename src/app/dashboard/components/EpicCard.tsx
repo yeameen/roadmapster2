@@ -23,12 +23,12 @@ export function EpicCardContent({
 }: ContentProps) {
   return (
     <div
-      className={`flex items-center gap-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 ${
-        isDragOverlay ? "shadow-lg ring-2 ring-blue-400 dark:ring-blue-500" : ""
+      className={`flex items-center gap-2 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 px-3 py-2 shadow-warm ${
+        isDragOverlay ? "shadow-lg ring-2 ring-amber-400 dark:ring-amber-500" : ""
       }`}
     >
       <button
-        className="shrink-0 cursor-grab touch-none text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
+        className="shrink-0 cursor-grab touch-none text-stone-400 dark:text-stone-500 hover:text-stone-600 dark:hover:text-stone-300"
         aria-label="Reorder"
         {...dragHandleProps}
       >
@@ -36,7 +36,7 @@ export function EpicCardContent({
       </button>
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
-          <span className="truncate text-sm font-medium text-gray-900 dark:text-white">
+          <span className="truncate text-sm font-medium text-stone-900 dark:text-white">
             {epic.title}
           </span>
           <span
@@ -46,14 +46,14 @@ export function EpicCardContent({
           </span>
         </div>
         {epic.owner && (
-          <p className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">{epic.owner}</p>
+          <p className="mt-0.5 text-xs text-stone-500 dark:text-stone-400">{epic.owner}</p>
         )}
       </div>
       {onEdit && onDelete && (
         <div className="ml-2 flex shrink-0 items-center gap-1">
           <button
             onClick={() => onEdit(epic)}
-            className="rounded p-1 text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-600 dark:hover:text-gray-300"
+            className="rounded-lg p-1 text-stone-400 dark:text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-800 hover:text-stone-600 dark:hover:text-stone-300"
             aria-label="Edit epic"
             title="Edit epic"
           >
@@ -61,7 +61,7 @@ export function EpicCardContent({
           </button>
           <button
             onClick={() => onDelete(epic.id)}
-            className="rounded p-1 text-gray-400 dark:text-gray-500 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400"
+            className="rounded-lg p-1 text-stone-400 dark:text-stone-500 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400"
             aria-label="Delete epic"
             title="Delete epic"
           >

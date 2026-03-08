@@ -39,7 +39,7 @@ export function DashboardClient({ workspaceId }: { workspaceId: string }) {
   if (teamLoading) {
     return (
       <div className="flex items-center justify-center py-24">
-        <p className="text-sm text-gray-500 dark:text-gray-400">Loading...</p>
+        <p className="text-sm text-stone-500 dark:text-stone-400">Loading...</p>
       </div>
     );
   }
@@ -110,22 +110,22 @@ export function DashboardClient({ workspaceId }: { workspaceId: string }) {
       {/* Header bar */}
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{team.name}</h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <h2 className="text-lg font-semibold text-stone-900 dark:text-white">{team.name}</h2>
+          <p className="text-sm text-stone-500 dark:text-stone-400">
             {members.length} member{members.length !== 1 ? "s" : ""} · {quarters.length} quarter{quarters.length !== 1 ? "s" : ""} · {epics.length} epic{epics.length !== 1 ? "s" : ""}
           </p>
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={handleExport}
-            className="flex items-center gap-2 rounded-md border border-gray-300 dark:border-gray-600 px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
+            className="flex items-center gap-2 rounded-xl border border-stone-300 dark:border-stone-600 px-3 py-1.5 text-sm font-medium text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800"
           >
             <Download className="h-4 w-4" />
             Export
           </button>
           <button
             onClick={() => setShowSettings(true)}
-            className="flex items-center gap-2 rounded-md border border-gray-300 dark:border-gray-600 px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
+            className="flex items-center gap-2 rounded-xl border border-stone-300 dark:border-stone-600 px-3 py-1.5 text-sm font-medium text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800"
           >
             <Settings className="h-4 w-4" />
             Team Settings

@@ -25,16 +25,16 @@ export function QuarterMembersModal({
 
   return (
     <Modal onClose={onClose}>
-        <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+        <div className="flex items-center justify-between border-b border-stone-200 dark:border-stone-700 px-6 py-4">
           <div>
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+            <h2 className="text-lg font-semibold text-stone-900 dark:text-white">
               Member Availability
             </h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400">{quarterName}</p>
+            <p className="text-sm text-stone-500 dark:text-stone-400">{quarterName}</p>
           </div>
           <button
             onClick={onClose}
-            className="rounded-md p-1 text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-600 dark:hover:text-gray-300"
+            className="rounded-lg p-1 text-stone-400 dark:text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-800 hover:text-stone-600 dark:hover:text-stone-300"
             aria-label="Close"
           >
             <X className="h-5 w-5" />
@@ -43,12 +43,12 @@ export function QuarterMembersModal({
 
         <div className="max-h-[60vh] overflow-y-auto px-6 py-4">
           {planningMembers.length === 0 ? (
-            <p className="py-4 text-center text-sm text-gray-400 dark:text-gray-500">
+            <p className="py-4 text-center text-sm text-stone-400 dark:text-stone-500">
               No planning members on the team yet.
             </p>
           ) : (
             <div className="space-y-3">
-              <p className="text-xs text-gray-500 dark:text-gray-400">
+              <p className="text-xs text-stone-500 dark:text-stone-400">
                 Set vacation days for each member this quarter.
               </p>
               {planningMembers.map((pm) => {
@@ -56,9 +56,9 @@ export function QuarterMembersModal({
                 return (
                   <div
                     key={pm.id}
-                    className="flex items-center justify-between rounded-md border border-gray-200 dark:border-gray-700 px-3 py-2"
+                    className="flex items-center justify-between rounded-xl border border-stone-200 dark:border-stone-700 px-3 py-2"
                   >
-                    <span className="text-sm font-medium text-gray-900 dark:text-white">
+                    <span className="text-sm font-medium text-stone-900 dark:text-white">
                       {pm.name}
                     </span>
                     <div className="flex items-center gap-2">
@@ -72,9 +72,9 @@ export function QuarterMembersModal({
                           }
                         }}
                         disabled={!qm}
-                        className="w-20 rounded-md border border-gray-300 dark:border-gray-600 px-2 py-1 text-right text-sm text-gray-900 dark:text-white shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 dark:disabled:bg-gray-800"
+                        className="w-20 rounded-xl border border-stone-300 dark:border-stone-600 px-2 py-1 text-right text-sm text-stone-900 dark:text-white shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 disabled:bg-stone-100 dark:disabled:bg-stone-800"
                       />
-                      <span className="text-xs text-gray-500 dark:text-gray-400">days off</span>
+                      <span className="text-xs text-stone-500 dark:text-stone-400">days off</span>
                     </div>
                   </div>
                 );
@@ -83,10 +83,10 @@ export function QuarterMembersModal({
           )}
         </div>
 
-        <div className="flex justify-end border-t border-gray-200 dark:border-gray-700 px-6 py-4">
+        <div className="flex justify-end border-t border-stone-200 dark:border-stone-700 px-6 py-4">
           <button
             onClick={onClose}
-            className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+            className="rounded-xl bg-amber-500 px-4 py-2 text-sm font-medium text-white hover:bg-amber-600"
           >
             Done
           </button>

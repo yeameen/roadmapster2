@@ -272,10 +272,10 @@ export function PlanningBoard({
 
         <div>
           <div className="mb-3 flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Quarters</h3>
+            <h3 className="text-sm font-semibold text-stone-900 dark:text-white">Quarters</h3>
             <button
               onClick={onCreateQuarter}
-              className="flex items-center gap-1 rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700"
+              className="flex items-center gap-1 rounded-xl bg-amber-500 px-3 py-1.5 text-sm font-medium text-white hover:bg-amber-600"
             >
               <Plus className="h-4 w-4" />
               Create Quarter
@@ -283,8 +283,8 @@ export function PlanningBoard({
           </div>
 
           {quarters.length === 0 ? (
-            <div className="rounded-lg border border-dashed border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 p-8 text-center">
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+            <div className="rounded-2xl border border-dashed border-stone-300 dark:border-stone-600 bg-white dark:bg-stone-900 p-8 text-center">
+              <p className="text-sm text-stone-500 dark:text-stone-400">
                 No quarters yet. Create a quarter to start planning capacity.
               </p>
             </div>
