@@ -6,7 +6,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { GripVertical, Pencil, Trash2 } from "lucide-react";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
 import type { Epic } from "@/lib/types";
-import { DROPPABLE_IDS, SIZE_COLORS } from "@/lib/constants";
+import { DROPPABLE_IDS, SIZE_COLORS, SIZE_TO_DAYS } from "@/lib/constants";
 
 type ContentProps = {
   epic: Epic;
@@ -47,7 +47,7 @@ export function EpicCardContent({
             <span
               className={`shrink-0 rounded px-1.5 py-0.5 text-xs font-medium ${SIZE_COLORS[epic.size]}`}
             >
-              {epic.size}
+              {epic.size} · {SIZE_TO_DAYS[epic.size]}d
             </span>
           </div>
           {epic.owner && (
