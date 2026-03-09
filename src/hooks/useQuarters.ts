@@ -55,11 +55,10 @@ export function useQuarters(teamId: string | null) {
 
       if (insertError) {
         setError(insertError.message);
-        return null;
+        throw new Error(insertError.message);
       }
 
       await fetchQuarters();
-      return true;
     },
     [teamId, quarters, supabase, fetchQuarters]
   );
@@ -78,6 +77,7 @@ export function useQuarters(teamId: string | null) {
       if (updateError) {
         setError(updateError.message);
         await fetchQuarters();
+        throw new Error(updateError.message);
       }
     },
     [supabase, fetchQuarters]

@@ -62,11 +62,10 @@ export function useEpics(teamId: string | null) {
 
       if (insertError) {
         setError(insertError.message);
-        return null;
+        throw new Error(insertError.message);
       }
 
       await fetchEpics();
-      return true;
     },
     [teamId, epics, supabase, fetchEpics]
   );
@@ -88,6 +87,7 @@ export function useEpics(teamId: string | null) {
       if (updateError) {
         setError(updateError.message);
         await fetchEpics();
+        throw new Error(updateError.message);
       }
     },
     [supabase, fetchEpics]

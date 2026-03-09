@@ -25,20 +25,27 @@ export function EpicFormModal({ epic, onClose, onSubmit }: Props) {
   const [description, setDescription] = useState(epic?.description ?? "");
   const [owner, setOwner] = useState(epic?.owner ?? "");
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!title.trim()) return;
+    setError(null);
     setSaving(true);
-    await onSubmit({
-      title: title.trim(),
-      size,
-      priority,
-      description: description.trim() || undefined,
-      owner: owner.trim() || undefined,
-    });
-    setSaving(false);
-    onClose();
+    try {
+      await onSubmit({
+        title: title.trim(),
+        size,
+        priority,
+        description: description.trim() || undefined,
+        owner: owner.trim() || undefined,
+      });
+      onClose();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
@@ -57,6 +64,11 @@ export function EpicFormModal({ epic, onClose, onSubmit }: Props) {
         </div>
 
         <form onSubmit={handleSubmit} className="px-6 py-4">
+          {error && (
+            <div className="mb-4 rounded-xl bg-red-50 dark:bg-red-900/20 px-4 py-3 text-sm text-red-700 dark:text-red-400">
+              {error}
+            </div>
+          )}
           <div className="space-y-4">
             <div>
               <label htmlFor="epic-title" className="block text-sm font-medium text-stone-700 dark:text-stone-300">

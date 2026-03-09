@@ -33,6 +33,7 @@ export function QuarterFormModal({
     quarter?.status ?? "planning"
   );
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const workingDays = useMemo(
     () => (startDate && endDate ? calculateWorkingDays(startDate, endDate, holidays) : 0),
@@ -53,17 +54,23 @@ export function QuarterFormModal({
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!name.trim() || !startDate || !endDate) return;
+    setError(null);
     setSaving(true);
-    await onSubmit({
-      name: name.trim(),
-      working_days: workingDays,
-      start_date: startDate,
-      end_date: endDate,
-      holidays,
-      ...(quarter ? { status } : {}),
-    });
-    setSaving(false);
-    onClose();
+    try {
+      await onSubmit({
+        name: name.trim(),
+        working_days: workingDays,
+        start_date: startDate,
+        end_date: endDate,
+        holidays,
+        ...(quarter ? { status } : {}),
+      });
+      onClose();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
+      setSaving(false);
+    }
   }
 
   const canSubmit = name.trim() && startDate && endDate && endDate >= startDate;
@@ -84,6 +91,11 @@ export function QuarterFormModal({
         </div>
 
         <form onSubmit={handleSubmit} className="px-6 py-4">
+          {error && (
+            <div className="mb-4 rounded-xl bg-red-50 dark:bg-red-900/20 px-4 py-3 text-sm text-red-700 dark:text-red-400">
+              {error}
+            </div>
+          )}
           <div className="space-y-4">
             <div>
               <label htmlFor="quarter-name" className="block text-sm font-medium text-stone-700 dark:text-stone-300">
