@@ -14,19 +14,21 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
-  const { data: membership } = await supabase
+  // Fetch all workspace memberships
+  const { data: memberships } = await supabase
     .from("workspace_members")
-    .select("workspace_id")
+    .select("workspace_id, role")
     .eq("user_id", user.id)
-    .limit(1)
-    .single();
+    .order("created_at", { ascending: true });
+
+  const activeMembership = memberships?.[0] ?? null;
 
   let workspaceName: string | null = null;
-  if (membership) {
+  if (activeMembership) {
     const { data: workspace } = await supabase
       .from("workspaces")
       .select("name")
-      .eq("id", membership.workspace_id)
+      .eq("id", activeMembership.workspace_id)
       .single();
     workspaceName = workspace?.name ?? null;
   }
@@ -51,8 +53,12 @@ export default async function DashboardPage() {
         </div>
       </header>
       <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
-        {membership ? (
-          <DashboardClient workspaceId={membership.workspace_id} />
+        {activeMembership ? (
+          <DashboardClient
+            workspaceId={activeMembership.workspace_id}
+            userId={user.id}
+            userRole={activeMembership.role as "owner" | "admin" | "member"}
+          />
         ) : (
           <div className="rounded-lg border border-dashed border-stone-300 dark:border-stone-600 bg-white dark:bg-stone-900 p-12 text-center">
             <p className="text-sm text-stone-500 dark:text-stone-400">

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Download, Plus, Settings } from "lucide-react";
+import { Download, Plus, Settings, Users } from "lucide-react";
 import { useTeams } from "@/hooks/useTeams";
 import { usePlanningMembers } from "@/hooks/usePlanningMembers";
 import { useQuarters } from "@/hooks/useQuarters";
@@ -14,10 +14,17 @@ import { QuarterFormModal } from "./QuarterFormModal";
 import { QuarterMembersModal } from "./QuarterMembersModal";
 import { EpicFormModal } from "./EpicFormModal";
 import { PlanningBoard } from "./PlanningBoard";
+import { WorkspaceMembersModal } from "./WorkspaceMembersModal";
 import { Modal } from "./Modal";
 import type { Epic, Quarter } from "@/lib/types";
 
-export function DashboardClient({ workspaceId }: { workspaceId: string }) {
+type Props = {
+  workspaceId: string;
+  userId: string;
+  userRole: "owner" | "admin" | "member";
+};
+
+export function DashboardClient({ workspaceId, userId, userRole }: Props) {
   const { teams, loading: teamsLoading, createTeam, updateTeam } = useTeams(workspaceId);
   const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);
   const [showCreateTeam, setShowCreateTeam] = useState(false);
@@ -44,6 +51,7 @@ export function DashboardClient({ workspaceId }: { workspaceId: string }) {
   const quarterIds = useMemo(() => quarters.map((q) => q.id), [quarters]);
   const { quarterMembersMap, refetch: refetchQuarterMembers } = useTeamQuarterMembers(quarterIds);
 
+  const [showWorkspaceMembers, setShowWorkspaceMembers] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [showQuarterForm, setShowQuarterForm] = useState(false);
   const [editingQuarter, setEditingQuarter] = useState<Quarter | null>(null);
@@ -169,6 +177,13 @@ export function DashboardClient({ workspaceId }: { workspaceId: string }) {
             </div>
             <div className="flex items-center gap-2">
               <button
+                onClick={() => setShowWorkspaceMembers(true)}
+                className="flex items-center gap-2 rounded-xl border border-stone-300 dark:border-stone-600 px-3 py-1.5 text-sm font-medium text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800"
+              >
+                <Users className="h-4 w-4" />
+                Members
+              </button>
+              <button
                 onClick={handleExport}
                 className="flex items-center gap-2 rounded-xl border border-stone-300 dark:border-stone-600 px-3 py-1.5 text-sm font-medium text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800"
               >
@@ -204,6 +219,15 @@ export function DashboardClient({ workspaceId }: { workspaceId: string }) {
           />
 
           {/* Modals */}
+          {showWorkspaceMembers && (
+            <WorkspaceMembersModal
+              workspaceId={workspaceId}
+              currentUserId={userId}
+              userRole={userRole}
+              onClose={() => setShowWorkspaceMembers(false)}
+            />
+          )}
+
           {showSettings && (
             <TeamSettingsModal
               team={activeTeam}

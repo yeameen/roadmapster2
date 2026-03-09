@@ -19,10 +19,21 @@ export async function ensureWorkspace(existingClient?: SupabaseClient) {
     .single();
 
   if (existingMembership) {
+    // Still try to accept any new pending invites (user may have been invited to additional workspaces)
+    await supabase.rpc("accept_pending_invites");
     return existingMembership.workspace_id;
   }
 
-  // Create a new workspace — the DB trigger auto-creates the owner membership.
+  // No existing membership — check for pending invites first
+  const { data: acceptedWorkspaces } = await supabase.rpc("accept_pending_invites");
+
+  if (acceptedWorkspaces && acceptedWorkspaces.length > 0) {
+    // User was invited — return the first accepted workspace
+    return acceptedWorkspaces[0];
+  }
+
+  // No invites — create a new workspace
+  // The DB trigger auto-creates the owner membership.
   // We cannot use .select() here because the SELECT RLS policy requires
   // workspace membership, which the AFTER INSERT trigger creates. The RETURNING
   // clause would fail before the trigger commits.

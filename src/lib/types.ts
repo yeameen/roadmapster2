@@ -76,6 +76,27 @@ export type Epic = {
   updated_at: string;
 };
 
+export type InviteStatus = "pending" | "accepted" | "revoked";
+
+export type WorkspaceInvite = {
+  id: string;
+  workspace_id: string;
+  email: string;
+  invited_by: string;
+  status: InviteStatus;
+  created_at: string;
+  expires_at: string;
+};
+
+export type WorkspaceMemberWithEmail = {
+  id: string;
+  workspace_id: string;
+  user_id: string;
+  role: "owner" | "admin" | "member";
+  email: string;
+  created_at: string;
+};
+
 export type CapacityResult = {
   totalAvailable: number;
   oncallLoad: number;
