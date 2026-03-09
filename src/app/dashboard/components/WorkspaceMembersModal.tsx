@@ -1,28 +1,52 @@
 "use client";
 
 import { useState } from "react";
-import { X, UserPlus, Trash2, Crown, Clock } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { X, UserPlus, Trash2, Crown, Clock, Pencil, Check } from "lucide-react";
 import { Modal } from "./Modal";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { useWorkspaceInvites } from "@/hooks/useWorkspaceInvites";
-import { inviteToWorkspace, removeWorkspaceMember } from "@/app/dashboard/actions";
+import { inviteToWorkspace, removeWorkspaceMember, renameWorkspace } from "@/app/dashboard/actions";
 import type { WorkspaceMemberWithEmail } from "@/lib/types";
 
 type Props = {
   workspaceId: string;
+  workspaceName: string;
   currentUserId: string;
   userRole: "owner" | "admin" | "member";
   onClose: () => void;
 };
 
-export function WorkspaceMembersModal({ workspaceId, currentUserId, userRole, onClose }: Props) {
+export function WorkspaceMembersModal({ workspaceId, workspaceName, currentUserId, userRole, onClose }: Props) {
+  const router = useRouter();
   const { invites, members, loading, revokeInvite, refetch } = useWorkspaceInvites(workspaceId);
   const [email, setEmail] = useState("");
   const [sending, setSending] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [removingMember, setRemovingMember] = useState<WorkspaceMemberWithEmail | null>(null);
+  const [editingName, setEditingName] = useState(false);
+  const [nameValue, setNameValue] = useState(workspaceName);
+  const [savingName, setSavingName] = useState(false);
 
   const isOwner = userRole === "owner" || userRole === "admin";
+
+  async function handleRename() {
+    if (!nameValue.trim() || nameValue.trim() === workspaceName) {
+      setEditingName(false);
+      setNameValue(workspaceName);
+      return;
+    }
+    setSavingName(true);
+    try {
+      await renameWorkspace(workspaceId, nameValue.trim());
+      setEditingName(false);
+      router.refresh();
+    } catch (err) {
+      setMessage({ type: "error", text: err instanceof Error ? err.message : "Failed to rename" });
+    } finally {
+      setSavingName(false);
+    }
+  }
 
   async function handleInvite(e: React.FormEvent) {
     e.preventDefault();
@@ -64,7 +88,7 @@ export function WorkspaceMembersModal({ workspaceId, currentUserId, userRole, on
       <Modal onClose={onClose} maxWidth="max-w-lg">
         <div className="flex items-center justify-between border-b border-stone-200 dark:border-stone-700 px-6 py-4">
           <h2 className="text-lg font-semibold text-stone-900 dark:text-white">
-            Workspace Members
+            Workspace Settings
           </h2>
           <button
             onClick={onClose}
@@ -76,6 +100,50 @@ export function WorkspaceMembersModal({ workspaceId, currentUserId, userRole, on
         </div>
 
         <div className="px-6 py-4 space-y-6">
+          {/* Workspace name */}
+          <div>
+            <label className="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1">
+              Workspace name
+            </label>
+            {editingName ? (
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={nameValue}
+                  onChange={(e) => setNameValue(e.target.value)}
+                  autoFocus
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") handleRename();
+                    if (e.key === "Escape") { setEditingName(false); setNameValue(workspaceName); }
+                  }}
+                  className="block w-full rounded-xl border border-stone-300 dark:border-stone-600 bg-white dark:bg-stone-800 px-3 py-1.5 text-sm text-stone-900 dark:text-white shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                />
+                <button
+                  onClick={handleRename}
+                  disabled={savingName}
+                  className="flex shrink-0 items-center gap-1 rounded-xl bg-amber-500 px-3 py-1.5 text-sm font-medium text-stone-900 hover:bg-amber-600 disabled:opacity-60"
+                >
+                  <Check className="h-4 w-4" />
+                  {savingName ? "Saving..." : "Save"}
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-stone-900 dark:text-white">{workspaceName}</span>
+                {isOwner && (
+                  <button
+                    onClick={() => setEditingName(true)}
+                    className="rounded-lg p-1 text-stone-400 dark:text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-800 hover:text-stone-600 dark:hover:text-stone-300"
+                    aria-label="Rename workspace"
+                    title="Rename workspace"
+                  >
+                    <Pencil className="h-3.5 w-3.5" />
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+
           {/* Invite form — only for owners/admins */}
           {isOwner && (
             <form onSubmit={handleInvite} className="space-y-3">

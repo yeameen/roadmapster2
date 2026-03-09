@@ -20,11 +20,12 @@ import type { Epic, Quarter } from "@/lib/types";
 
 type Props = {
   workspaceId: string;
+  workspaceName: string;
   userId: string;
   userRole: "owner" | "admin" | "member";
 };
 
-export function DashboardClient({ workspaceId, userId, userRole }: Props) {
+export function DashboardClient({ workspaceId, workspaceName, userId, userRole }: Props) {
   const { teams, loading: teamsLoading, createTeam, updateTeam } = useTeams(workspaceId);
   const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);
   const [showCreateTeam, setShowCreateTeam] = useState(false);
@@ -222,6 +223,7 @@ export function DashboardClient({ workspaceId, userId, userRole }: Props) {
           {showWorkspaceMembers && (
             <WorkspaceMembersModal
               workspaceId={workspaceId}
+              workspaceName={workspaceName}
               currentUserId={userId}
               userRole={userRole}
               onClose={() => setShowWorkspaceMembers(false)}

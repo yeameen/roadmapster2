@@ -84,6 +84,17 @@ export async function inviteToWorkspace(workspaceId: string, email: string) {
   return { status: "invited" as const, email };
 }
 
+export async function renameWorkspace(workspaceId: string, name: string) {
+  const supabase = await createClient();
+
+  const { error } = await supabase
+    .from("workspaces")
+    .update({ name })
+    .eq("id", workspaceId);
+
+  if (error) throw new Error(error.message);
+}
+
 export async function removeWorkspaceMember(workspaceId: string, userId: string) {
   const admin = createAdminClient();
 

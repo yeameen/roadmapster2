@@ -81,6 +81,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
       <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
         <DashboardClient
           workspaceId={activeMembership.workspace_id}
+          workspaceName={activeWorkspace?.name ?? "Workspace"}
           userId={user.id}
           userRole={activeMembership.role as "owner" | "admin" | "member"}
         />
