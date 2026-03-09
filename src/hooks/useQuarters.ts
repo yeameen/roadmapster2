@@ -20,7 +20,7 @@ export function useQuarters(teamId: string | null) {
       .from("quarters")
       .select("*")
       .eq("team_id", teamId)
-      .order("display_order", { ascending: true });
+      .order("start_date", { ascending: true });
 
     if (fetchError) {
       setError(fetchError.message);
