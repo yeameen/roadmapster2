@@ -17,6 +17,7 @@
 
 # screenshots
 /screenshots
+*.png
 
 # next.js
 /.next/
