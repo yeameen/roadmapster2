@@ -72,6 +72,58 @@ export type Epic = {
   quarter_id: string | null;
   position: number;
   owner: string | null;
+  jira_epic_id: string | null;
+  jira_epic_key: string | null;
+  jira_url: string | null;
+  story_points: number | null;
+  size_override: boolean;
+  last_synced_at: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type JiraStatusCategory = "new" | "indeterminate" | "done";
+
+export type JiraConnection = {
+  id: string;
+  workspace_id: string;
+  atlassian_cloud_id: string;
+  atlassian_site_url: string;
+  token_expires_at: string;
+  scopes: string[];
+  connected_by: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type JiraSyncStatus = "idle" | "syncing" | "error";
+
+export type JiraTeamMapping = {
+  id: string;
+  team_id: string;
+  jira_project_key: string | null;
+  jira_filter_jql: string | null;
+  epic_issue_type: string;
+  last_synced_at: string | null;
+  sync_status: JiraSyncStatus;
+  sync_error: string | null;
+  auto_sync_enabled: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+export type JiraStory = {
+  id: string;
+  epic_id: string;
+  jira_issue_id: string;
+  jira_issue_key: string;
+  title: string;
+  status: string;
+  status_category: JiraStatusCategory;
+  assignee: string | null;
+  story_points: number | null;
+  issue_type: string;
+  jira_url: string;
   created_at: string;
   updated_at: string;
 };

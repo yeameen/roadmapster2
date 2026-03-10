@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { X } from "lucide-react";
+import { ExternalLink, X } from "lucide-react";
 import { Modal } from "./Modal";
 import type { Epic, EpicSize, EpicPriority } from "@/lib/types";
 import { SIZES, PRIORITIES, SIZE_TO_DAYS, PRIORITY_LABELS } from "@/lib/constants";
+import { suggestSizeFromPoints } from "@/lib/jira/constants";
 
 type Props = {
   epic?: Epic;
@@ -15,10 +16,14 @@ type Props = {
     priority: EpicPriority;
     description?: string;
     owner?: string;
+    size_override?: boolean;
   }) => Promise<void>;
 };
 
 export function EpicFormModal({ epic, onClose, onSubmit }: Props) {
+  const isSynced = epic?.jira_epic_key != null;
+  const autoSize = isSynced ? suggestSizeFromPoints(epic.story_points ?? null) : null;
+
   const [title, setTitle] = useState(epic?.title ?? "");
   const [size, setSize] = useState<EpicSize>(epic?.size ?? "M");
   const [priority, setPriority] = useState<EpicPriority>(epic?.priority ?? "P1");
@@ -26,6 +31,9 @@ export function EpicFormModal({ epic, onClose, onSubmit }: Props) {
   const [owner, setOwner] = useState(epic?.owner ?? "");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Track whether size differs from auto-suggested for synced epics
+  const sizeIsOverridden = isSynced && size !== autoSize;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -39,6 +47,7 @@ export function EpicFormModal({ epic, onClose, onSubmit }: Props) {
         priority,
         description: description.trim() || undefined,
         owner: owner.trim() || undefined,
+        ...(isSynced ? { size_override: sizeIsOverridden } : {}),
       });
       onClose();
     } catch (err) {
@@ -48,12 +57,34 @@ export function EpicFormModal({ epic, onClose, onSubmit }: Props) {
     }
   }
 
+  function handleResetSize() {
+    if (autoSize) {
+      setSize(autoSize);
+    }
+  }
+
+  const readOnlyInputClasses =
+    "mt-1 block w-full rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800/50 px-3 py-2 text-sm text-stone-500 dark:text-stone-400 cursor-not-allowed";
+
   return (
     <Modal onClose={onClose}>
         <div className="flex items-center justify-between border-b border-stone-200 dark:border-stone-700 px-6 py-4">
-          <h2 className="text-lg font-semibold text-stone-900 dark:text-white">
-            {epic ? "Edit Epic" : "Add Epic"}
-          </h2>
+          <div className="flex items-center gap-2">
+            <h2 className="text-lg font-semibold text-stone-900 dark:text-white">
+              {epic ? "Edit Epic" : "Add Epic"}
+            </h2>
+            {isSynced && epic.jira_url && (
+              <a
+                href={epic.jira_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-lg p-1 text-stone-400 dark:text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-800 hover:text-stone-600 dark:hover:text-stone-300"
+                title={`Open ${epic.jira_epic_key} in Jira`}
+              >
+                <ExternalLink className="h-4 w-4" />
+              </a>
+            )}
+          </div>
           <button
             onClick={onClose}
             className="rounded-lg p-1 text-stone-400 dark:text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-800 hover:text-stone-600 dark:hover:text-stone-300"
@@ -74,15 +105,28 @@ export function EpicFormModal({ epic, onClose, onSubmit }: Props) {
               <label htmlFor="epic-title" className="block text-sm font-medium text-stone-700 dark:text-stone-300">
                 Title
               </label>
-              <input
-                id="epic-title"
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="e.g. Migrate auth to SSO"
-                required
-                className="mt-1 block w-full rounded-xl border border-stone-300 dark:border-stone-600 bg-white dark:bg-stone-800 px-3 py-2 text-sm text-stone-900 dark:text-white shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
-              />
+              {isSynced ? (
+                <>
+                  <input
+                    id="epic-title"
+                    type="text"
+                    value={title}
+                    readOnly
+                    className={readOnlyInputClasses}
+                  />
+                  <p className="mt-1 text-xs text-stone-400 dark:text-stone-500">Synced from Jira</p>
+                </>
+              ) : (
+                <input
+                  id="epic-title"
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="e.g. Migrate auth to SSO"
+                  required
+                  className="mt-1 block w-full rounded-xl border border-stone-300 dark:border-stone-600 bg-white dark:bg-stone-800 px-3 py-2 text-sm text-stone-900 dark:text-white shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                />
+              )}
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -102,52 +146,109 @@ export function EpicFormModal({ epic, onClose, onSubmit }: Props) {
                     </option>
                   ))}
                 </select>
+                {isSynced && (
+                  <div className="mt-1 flex items-center gap-2">
+                    <span className="text-xs text-stone-400 dark:text-stone-500">
+                      Auto: {autoSize} (from {epic.story_points ?? 0} pts)
+                    </span>
+                    {epic.size_override && (
+                      <button
+                        type="button"
+                        onClick={handleResetSize}
+                        className="text-xs text-amber-600 dark:text-amber-400 hover:underline"
+                      >
+                        Reset to auto
+                      </button>
+                    )}
+                  </div>
+                )}
               </div>
               <div>
                 <label htmlFor="epic-priority" className="block text-sm font-medium text-stone-700 dark:text-stone-300">
                   Priority
                 </label>
-                <select
-                  id="epic-priority"
-                  value={priority}
-                  onChange={(e) => setPriority(e.target.value as EpicPriority)}
-                  className="mt-1 block w-full rounded-xl border border-stone-300 dark:border-stone-600 bg-white dark:bg-stone-800 px-3 py-2 text-sm text-stone-900 dark:text-white shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
-                >
-                  {PRIORITIES.map((p) => (
-                    <option key={p} value={p}>
-                      {p} — {PRIORITY_LABELS[p]}
-                    </option>
-                  ))}
-                </select>
+                {isSynced ? (
+                  <input
+                    id="epic-priority"
+                    type="text"
+                    value={`${priority} — ${PRIORITY_LABELS[priority]}`}
+                    readOnly
+                    className={readOnlyInputClasses}
+                  />
+                ) : (
+                  <select
+                    id="epic-priority"
+                    value={priority}
+                    onChange={(e) => setPriority(e.target.value as EpicPriority)}
+                    className="mt-1 block w-full rounded-xl border border-stone-300 dark:border-stone-600 bg-white dark:bg-stone-800 px-3 py-2 text-sm text-stone-900 dark:text-white shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                  >
+                    {PRIORITIES.map((p) => (
+                      <option key={p} value={p}>
+                        {p} — {PRIORITY_LABELS[p]}
+                      </option>
+                    ))}
+                  </select>
+                )}
               </div>
             </div>
+
+            {isSynced && epic.story_points != null && (
+              <div>
+                <label className="block text-sm font-medium text-stone-700 dark:text-stone-300">
+                  Story Points
+                </label>
+                <p className="mt-1 text-sm text-stone-600 dark:text-stone-400">
+                  {epic.story_points} pts (synced from Jira)
+                </p>
+              </div>
+            )}
 
             <div>
               <label htmlFor="epic-description" className="block text-sm font-medium text-stone-700 dark:text-stone-300">
                 Description
               </label>
-              <textarea
-                id="epic-description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                rows={3}
-                placeholder="Optional description..."
-                className="mt-1 block w-full resize-none rounded-xl border border-stone-300 dark:border-stone-600 bg-white dark:bg-stone-800 px-3 py-2 text-sm text-stone-900 dark:text-white shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
-              />
+              {isSynced ? (
+                <textarea
+                  id="epic-description"
+                  value={description}
+                  readOnly
+                  rows={3}
+                  className={`${readOnlyInputClasses} resize-none`}
+                />
+              ) : (
+                <textarea
+                  id="epic-description"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  rows={3}
+                  placeholder="Optional description..."
+                  className="mt-1 block w-full resize-none rounded-xl border border-stone-300 dark:border-stone-600 bg-white dark:bg-stone-800 px-3 py-2 text-sm text-stone-900 dark:text-white shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                />
+              )}
             </div>
 
             <div>
               <label htmlFor="epic-owner" className="block text-sm font-medium text-stone-700 dark:text-stone-300">
                 Owner
               </label>
-              <input
-                id="epic-owner"
-                type="text"
-                value={owner}
-                onChange={(e) => setOwner(e.target.value)}
-                placeholder="Optional owner name"
-                className="mt-1 block w-full rounded-xl border border-stone-300 dark:border-stone-600 bg-white dark:bg-stone-800 px-3 py-2 text-sm text-stone-900 dark:text-white shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
-              />
+              {isSynced ? (
+                <input
+                  id="epic-owner"
+                  type="text"
+                  value={owner}
+                  readOnly
+                  className={readOnlyInputClasses}
+                />
+              ) : (
+                <input
+                  id="epic-owner"
+                  type="text"
+                  value={owner}
+                  onChange={(e) => setOwner(e.target.value)}
+                  placeholder="Optional owner name"
+                  className="mt-1 block w-full rounded-xl border border-stone-300 dark:border-stone-600 bg-white dark:bg-stone-800 px-3 py-2 text-sm text-stone-900 dark:text-white shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                />
+              )}
             </div>
           </div>
 

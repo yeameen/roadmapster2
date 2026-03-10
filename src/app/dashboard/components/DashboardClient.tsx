@@ -1,20 +1,25 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Download, Plus, Settings, Users } from "lucide-react";
+import { Download, Link, Plus, Settings, Users } from "lucide-react";
 import { useTeams } from "@/hooks/useTeams";
 import { usePlanningMembers } from "@/hooks/usePlanningMembers";
 import { useQuarters } from "@/hooks/useQuarters";
 import { useQuarterMembers } from "@/hooks/useQuarterMembers";
 import { useEpics } from "@/hooks/useEpics";
 import { useTeamQuarterMembers } from "@/hooks/useTeamQuarterMembers";
+import { useJiraConnection } from "@/hooks/useJiraConnection";
+import { useJiraTeamMapping } from "@/hooks/useJiraTeamMapping";
 import { CreateTeamForm } from "./CreateTeamForm";
 import { TeamSettingsModal } from "./TeamSettingsModal";
 import { QuarterFormModal } from "./QuarterFormModal";
 import { QuarterMembersModal } from "./QuarterMembersModal";
 import { EpicFormModal } from "./EpicFormModal";
+import { EpicStoriesModal } from "./EpicStoriesModal";
 import { PlanningBoard } from "./PlanningBoard";
 import { WorkspaceMembersModal } from "./WorkspaceMembersModal";
+import { JiraSettingsModal } from "./JiraSettingsModal";
+import { JiraSyncButton } from "./JiraSyncButton";
 import { Modal } from "./Modal";
 import type { Epic, Quarter } from "@/lib/types";
 
@@ -51,14 +56,18 @@ export function DashboardClient({ workspaceId, workspaceName, userId, userRole }
   const { epics, createEpic, updateEpic, deleteEpic } = useEpics(activeTeam?.id ?? null);
   const quarterIds = useMemo(() => quarters.map((q) => q.id), [quarters]);
   const { quarterMembersMap, refetch: refetchQuarterMembers } = useTeamQuarterMembers(quarterIds);
+  const { connection: jiraConnection } = useJiraConnection(workspaceId);
+  const { mapping: jiraMapping } = useJiraTeamMapping(activeTeam?.id ?? null);
 
   const [showWorkspaceMembers, setShowWorkspaceMembers] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [showJiraSettings, setShowJiraSettings] = useState(false);
   const [showQuarterForm, setShowQuarterForm] = useState(false);
   const [editingQuarter, setEditingQuarter] = useState<Quarter | null>(null);
   const [showEpicForm, setShowEpicForm] = useState(false);
   const [editingEpic, setEditingEpic] = useState<Epic | null>(null);
   const [quarterMembersQuarter, setQuarterMembersQuarter] = useState<Quarter | null>(null);
+  const [storiesEpic, setStoriesEpic] = useState<Epic | null>(null);
 
   // Single-quarter members hook for the vacation days modal
   const { quarterMembers, initializeMembers, updateVacationDays } = useQuarterMembers(
@@ -205,6 +214,27 @@ export function DashboardClient({ workspaceId, workspaceName, userId, userRole }
                 <Users className="h-4 w-4" />
                 Members
               </button>
+              {jiraConnection ? (
+                <>
+                  <JiraSyncButton teamId={activeTeam.id} mapping={jiraMapping} />
+                  <button
+                    onClick={() => setShowJiraSettings(true)}
+                    className="flex shrink-0 items-center gap-2 rounded-xl border border-stone-300 dark:border-stone-600 px-3 py-1.5 text-sm font-medium text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800"
+                    title="Jira settings"
+                  >
+                    <Link className="h-4 w-4" />
+                    Jira
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={() => setShowJiraSettings(true)}
+                  className="flex shrink-0 items-center gap-2 rounded-xl border border-amber-400 dark:border-amber-600 px-3 py-1.5 text-sm font-medium text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20"
+                >
+                  <Link className="h-4 w-4" />
+                  Connect Jira
+                </button>
+              )}
               <button
                 onClick={handleExport}
                 className="flex shrink-0 items-center gap-2 rounded-xl border border-stone-300 dark:border-stone-600 px-3 py-1.5 text-sm font-medium text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800"
@@ -238,6 +268,10 @@ export function DashboardClient({ workspaceId, workspaceName, userId, userRole }
               setQuarterMembersQuarter(quarter);
               await initializeMembers(quarter.id, members.map((m) => m.id));
             }}
+            onShowStories={(epicId) => {
+              const epic = epics.find((e) => e.id === epicId);
+              if (epic) setStoriesEpic(epic);
+            }}
           />
 
           {/* Modals */}
@@ -255,11 +289,24 @@ export function DashboardClient({ workspaceId, workspaceName, userId, userRole }
             <TeamSettingsModal
               team={activeTeam}
               members={members}
+              workspaceId={workspaceId}
+              jiraConnection={jiraConnection}
+              jiraMapping={jiraMapping}
+              onOpenJiraSettings={() => { setShowSettings(false); setShowJiraSettings(true); }}
               onClose={() => setShowSettings(false)}
               onUpdateTeam={async (updates) => { await updateTeam(activeTeam.id, updates); }}
               onAddMember={addMember}
               onUpdateMember={updateMember}
               onRemoveMember={removeMember}
+            />
+          )}
+
+          {showJiraSettings && (
+            <JiraSettingsModal
+              workspaceId={workspaceId}
+              teamId={activeTeam.id}
+              teamName={activeTeam.name}
+              onClose={() => setShowJiraSettings(false)}
             />
           )}
 
@@ -288,6 +335,16 @@ export function DashboardClient({ workspaceId, workspaceName, userId, userRole }
                   await createEpic(fields);
                 }
               }}
+            />
+          )}
+
+          {storiesEpic && (
+            <EpicStoriesModal
+              epicId={storiesEpic.id}
+              epicTitle={storiesEpic.title}
+              jiraEpicKey={storiesEpic.jira_epic_key}
+              jiraUrl={storiesEpic.jira_url}
+              onClose={() => setStoriesEpic(null)}
             />
           )}
 

@@ -1,14 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { X, Plus, Trash2 } from "lucide-react";
+import { X, Plus, Trash2, Link, ExternalLink } from "lucide-react";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { Modal } from "./Modal";
-import type { Team, PlanningMember } from "@/lib/types";
+import type { Team, PlanningMember, JiraConnection, JiraTeamMapping } from "@/lib/types";
 
 type Props = {
   team: Team;
   members: PlanningMember[];
+  workspaceId: string;
+  jiraConnection: JiraConnection | null;
+  jiraMapping: JiraTeamMapping | null;
+  onOpenJiraSettings: () => void;
   onClose: () => void;
   onUpdateTeam: (updates: Partial<Pick<Team, "name" | "buffer_percentage" | "oncall_per_sprint" | "sprints_per_quarter" | "default_working_days">>) => Promise<void>;
   onAddMember: (name: string, skills?: string[]) => Promise<unknown>;
@@ -19,6 +23,9 @@ type Props = {
 export function TeamSettingsModal({
   team,
   members,
+  jiraConnection,
+  jiraMapping,
+  onOpenJiraSettings,
   onClose,
   onUpdateTeam,
   onAddMember,
@@ -187,6 +194,58 @@ export function TeamSettingsModal({
                 </li>
               )}
             </ul>
+          </div>
+
+          {/* Jira Integration */}
+          <div className="mt-6 border-t border-stone-200 dark:border-stone-700 pt-4">
+            <h3 className="text-sm font-semibold text-stone-900 dark:text-white">
+              Jira Integration
+            </h3>
+
+            {jiraConnection ? (
+              <div className="mt-3 space-y-2">
+                <div className="flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-green-500" />
+                  <span className="text-sm text-stone-700 dark:text-stone-300">Connected</span>
+                </div>
+                {jiraMapping ? (
+                  <div className="space-y-1">
+                    <p className="text-xs text-stone-500 dark:text-stone-400">
+                      Project: <span className="font-medium text-stone-700 dark:text-stone-300">{jiraMapping.jira_project_key ?? "Custom JQL"}</span>
+                    </p>
+                    {jiraMapping.last_synced_at && (
+                      <p className="text-xs text-stone-500 dark:text-stone-400">
+                        Last synced: {new Date(jiraMapping.last_synced_at).toLocaleDateString()}
+                      </p>
+                    )}
+                  </div>
+                ) : (
+                  <p className="text-xs text-stone-500 dark:text-stone-400">
+                    No project mapped yet.
+                  </p>
+                )}
+                <button
+                  onClick={onOpenJiraSettings}
+                  className="mt-2 flex items-center gap-2 rounded-xl border border-stone-300 dark:border-stone-600 px-3 py-1.5 text-xs font-medium text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800"
+                >
+                  <Link className="h-3.5 w-3.5" />
+                  Configure
+                </button>
+              </div>
+            ) : (
+              <div className="mt-3">
+                <p className="text-xs text-stone-500 dark:text-stone-400">
+                  Import epics from Jira and keep your roadmap in sync.
+                </p>
+                <button
+                  onClick={onOpenJiraSettings}
+                  className="mt-2 flex items-center gap-2 rounded-xl border border-amber-400 dark:border-amber-600 px-3 py-1.5 text-xs font-medium text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20"
+                >
+                  <ExternalLink className="h-3.5 w-3.5" />
+                  Connect Jira
+                </button>
+              </div>
+            )}
           </div>
         </div>
 

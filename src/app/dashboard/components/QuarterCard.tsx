@@ -21,6 +21,7 @@ type Props = {
   onQuarterMembers: (quarter: Quarter) => void;
   onEditEpic: (epic: Epic) => void;
   onDeleteEpic: (id: string) => void;
+  onShowStories?: (epicId: string) => void;
 };
 
 export function QuarterCard({
@@ -33,6 +34,7 @@ export function QuarterCard({
   onQuarterMembers,
   onEditEpic,
   onDeleteEpic,
+  onShowStories,
 }: Props) {
   const [collapsed, setCollapsed] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -136,6 +138,7 @@ export function QuarterCard({
                     epic={epic}
                     onEdit={onEditEpic}
                     onDelete={onDeleteEpic}
+                    onShowStories={onShowStories}
                   />
                 ))}
               </div>

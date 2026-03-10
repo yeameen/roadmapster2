@@ -12,9 +12,10 @@ type Props = {
   onAddEpic: () => void;
   onEditEpic: (epic: Epic) => void;
   onDeleteEpic: (id: string) => void;
+  onShowStories?: (epicId: string) => void;
 };
 
-export function BacklogPanel({ epics, onAddEpic, onEditEpic, onDeleteEpic }: Props) {
+export function BacklogPanel({ epics, onAddEpic, onEditEpic, onDeleteEpic, onShowStories }: Props) {
   const { setNodeRef, isOver } = useDroppable({ id: DROPPABLE_IDS.BACKLOG });
 
   const sortableIds = epics.map((e) => `${DROPPABLE_IDS.EPIC_PREFIX}${e.id}`);
@@ -57,6 +58,7 @@ export function BacklogPanel({ epics, onAddEpic, onEditEpic, onDeleteEpic }: Pro
                     epics={priorityEpics}
                     onEdit={onEditEpic}
                     onDelete={onDeleteEpic}
+                    onShowStories={onShowStories}
                   />
                 );
               })}
@@ -73,11 +75,13 @@ function PriorityGroup({
   epics,
   onEdit,
   onDelete,
+  onShowStories,
 }: {
   priority: EpicPriority;
   epics: Epic[];
   onEdit: (epic: Epic) => void;
   onDelete: (id: string) => void;
+  onShowStories?: (epicId: string) => void;
 }) {
   return (
     <div>
@@ -91,6 +95,7 @@ function PriorityGroup({
             epic={epic}
             onEdit={onEdit}
             onDelete={onDelete}
+            onShowStories={onShowStories}
           />
         ))}
       </div>

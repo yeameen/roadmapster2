@@ -3,8 +3,9 @@
 import { useState } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { GripVertical, Pencil, Trash2 } from "lucide-react";
+import { ExternalLink, GripVertical, Pencil, Trash2 } from "lucide-react";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
+import { EpicProgressBadge } from "./EpicProgressBadge";
 import type { Epic } from "@/lib/types";
 import { DROPPABLE_IDS, SIZE_COLORS, SIZE_TO_DAYS } from "@/lib/constants";
 
@@ -12,6 +13,7 @@ type ContentProps = {
   epic: Epic;
   onEdit?: (epic: Epic) => void;
   onDelete?: (id: string) => void;
+  onShowStories?: (epicId: string) => void;
   dragHandleProps?: React.HTMLAttributes<HTMLButtonElement>;
   isDragOverlay?: boolean;
 };
@@ -20,10 +22,12 @@ export function EpicCardContent({
   epic,
   onEdit,
   onDelete,
+  onShowStories,
   dragHandleProps,
   isDragOverlay,
 }: ContentProps) {
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const isSynced = epic.jira_epic_key != null;
 
   return (
     <>
@@ -41,9 +45,27 @@ export function EpicCardContent({
         </button>
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
+            {isSynced && (
+              <span
+                className="h-1.5 w-1.5 shrink-0 rounded-full bg-blue-500 dark:bg-blue-400"
+                title="Synced from Jira"
+              />
+            )}
             <span className="truncate text-sm font-medium text-stone-900 dark:text-white">
               {epic.title}
             </span>
+            {isSynced && epic.jira_url && (
+              <a
+                href={epic.jira_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="shrink-0 text-stone-400 dark:text-stone-500 hover:text-stone-600 dark:hover:text-stone-300"
+                title={`Open ${epic.jira_epic_key} in Jira`}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <ExternalLink className="h-3 w-3" />
+              </a>
+            )}
             <span
               className={`shrink-0 rounded px-1.5 py-0.5 text-xs font-medium ${SIZE_COLORS[epic.size]}`}
             >
@@ -52,6 +74,12 @@ export function EpicCardContent({
           </div>
           {epic.owner && (
             <p className="mt-0.5 text-xs text-stone-500 dark:text-stone-400">{epic.owner}</p>
+          )}
+          {isSynced && (
+            <EpicProgressBadge
+              epicId={epic.id}
+              onClick={onShowStories ? () => onShowStories(epic.id) : undefined}
+            />
           )}
         </div>
         {onEdit && onDelete && (
@@ -94,9 +122,10 @@ type SortableProps = {
   epic: Epic;
   onEdit: (epic: Epic) => void;
   onDelete: (id: string) => void;
+  onShowStories?: (epicId: string) => void;
 };
 
-export function SortableEpicCard({ epic, onEdit, onDelete }: SortableProps) {
+export function SortableEpicCard({ epic, onEdit, onDelete, onShowStories }: SortableProps) {
   const sortableId = `${DROPPABLE_IDS.EPIC_PREFIX}${epic.id}`;
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id: sortableId });
@@ -113,6 +142,7 @@ export function SortableEpicCard({ epic, onEdit, onDelete }: SortableProps) {
         epic={epic}
         onEdit={onEdit}
         onDelete={onDelete}
+        onShowStories={onShowStories}
         dragHandleProps={listeners}
       />
     </div>

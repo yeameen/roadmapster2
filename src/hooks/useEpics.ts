@@ -73,7 +73,7 @@ export function useEpics(teamId: string | null) {
   const updateEpic = useCallback(
     async (
       id: string,
-      updates: Partial<Pick<Epic, "title" | "size" | "priority" | "description" | "owner" | "quarter_id" | "position">>
+      updates: Partial<Pick<Epic, "title" | "size" | "priority" | "description" | "owner" | "quarter_id" | "position" | "size_override">>
     ) => {
       setEpics((prev) =>
         prev.map((e) => (e.id === id ? { ...e, ...updates } : e))

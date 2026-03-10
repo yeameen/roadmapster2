@@ -39,6 +39,7 @@ type Props = {
   onEditQuarter: (quarter: Quarter) => void;
   onDeleteQuarter: (id: string) => Promise<void>;
   onQuarterMembers: (quarter: Quarter) => void;
+  onShowStories?: (epicId: string) => void;
 };
 
 function stripEpicPrefix(id: string): string {
@@ -68,6 +69,7 @@ export function PlanningBoard({
   onEditQuarter,
   onDeleteQuarter,
   onQuarterMembers,
+  onShowStories,
 }: Props) {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [localEpics, setLocalEpics] = useState(propEpics);
@@ -268,6 +270,7 @@ export function PlanningBoard({
           onAddEpic={onAddEpic}
           onEditEpic={onEditEpic}
           onDeleteEpic={onDeleteEpic}
+          onShowStories={onShowStories}
         />
 
         <div>
@@ -302,6 +305,7 @@ export function PlanningBoard({
                   onQuarterMembers={onQuarterMembers}
                   onEditEpic={onEditEpic}
                   onDeleteEpic={onDeleteEpic}
+                  onShowStories={onShowStories}
                 />
               ))}
             </div>

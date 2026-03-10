@@ -1,4 +1,4 @@
-import type { EpicSize, EpicPriority, QuarterStatus } from "./types";
+import type { EpicSize, EpicPriority, QuarterStatus, JiraStatusCategory } from "./types";
 
 export const SIZE_COLORS: Record<EpicSize, string> = {
   XS: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300",
@@ -52,3 +52,9 @@ export const DROPPABLE_IDS = {
   QUARTER_PREFIX: "quarter:",
   EPIC_PREFIX: "epic:",
 } as const;
+
+export const JIRA_STATUS_CATEGORY_COLORS: Record<JiraStatusCategory, string> = {
+  new: "bg-stone-100 text-stone-600 dark:bg-stone-800 dark:text-stone-400",
+  indeterminate: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300",
+  done: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300",
+};
