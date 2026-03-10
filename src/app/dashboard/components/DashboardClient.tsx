@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Download, Link, Plus, Settings, Users } from "lucide-react";
+import { Download, Plus, Settings, Users } from "lucide-react";
 import { useTeams } from "@/hooks/useTeams";
 import { usePlanningMembers } from "@/hooks/usePlanningMembers";
 import { useQuarters } from "@/hooks/useQuarters";
@@ -214,26 +214,8 @@ export function DashboardClient({ workspaceId, workspaceName, userId, userRole }
                 <Users className="h-4 w-4" />
                 Members
               </button>
-              {jiraConnection ? (
-                <>
-                  <JiraSyncButton teamId={activeTeam.id} mapping={jiraMapping} />
-                  <button
-                    onClick={() => setShowJiraSettings(true)}
-                    className="flex shrink-0 items-center gap-2 rounded-xl border border-stone-300 dark:border-stone-600 px-3 py-1.5 text-sm font-medium text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800"
-                    title="Jira settings"
-                  >
-                    <Link className="h-4 w-4" />
-                    Jira
-                  </button>
-                </>
-              ) : (
-                <button
-                  onClick={() => setShowJiraSettings(true)}
-                  className="flex shrink-0 items-center gap-2 rounded-xl border border-amber-400 dark:border-amber-600 px-3 py-1.5 text-sm font-medium text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20"
-                >
-                  <Link className="h-4 w-4" />
-                  Connect Jira
-                </button>
+              {jiraConnection && jiraMapping && (
+                <JiraSyncButton teamId={activeTeam.id} mapping={jiraMapping} />
               )}
               <button
                 onClick={handleExport}
