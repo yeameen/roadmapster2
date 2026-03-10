@@ -36,7 +36,7 @@ export function ConfirmDialog({
 
   return createPortal(
     <div
-      className="modal-backdrop fixed inset-0 z-[60] flex items-center justify-center bg-black/50"
+      className="modal-backdrop fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm"
       onClick={onCancel}
       role="alertdialog"
       aria-modal="true"

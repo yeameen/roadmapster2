@@ -42,7 +42,7 @@ export function Modal({ onClose, children, maxWidth = "max-w-md" }: Props) {
 
   return createPortal(
     <div
-      className="modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+      className="modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
       onClick={onClose}
       role="dialog"
       aria-modal="true"

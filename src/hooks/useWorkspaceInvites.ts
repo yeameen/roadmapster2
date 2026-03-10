@@ -8,6 +8,7 @@ export function useWorkspaceInvites(workspaceId: string | null) {
   const [invites, setInvites] = useState<WorkspaceInvite[]>([]);
   const [members, setMembers] = useState<WorkspaceMemberWithEmail[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const supabase = createClient();
 
   const fetchData = useCallback(async () => {
@@ -15,6 +16,8 @@ export function useWorkspaceInvites(workspaceId: string | null) {
       setLoading(false);
       return;
     }
+
+    setError(null);
 
     const [invitesResult, membersResult] = await Promise.all([
       supabase
@@ -25,6 +28,12 @@ export function useWorkspaceInvites(workspaceId: string | null) {
         .order("created_at", { ascending: false }),
       supabase.rpc("get_workspace_members_with_email", { ws_id: workspaceId }),
     ]);
+
+    if (invitesResult.error && membersResult.error) {
+      setError("Failed to load workspace data. The invite system may not be set up yet.");
+    } else if (membersResult.error) {
+      setError("Failed to load members. The workspace members function may not be available.");
+    }
 
     if (invitesResult.data) setInvites(invitesResult.data);
     if (membersResult.data) setMembers(membersResult.data);
@@ -51,5 +60,5 @@ export function useWorkspaceInvites(workspaceId: string | null) {
     [supabase, fetchData]
   );
 
-  return { invites, members, loading, revokeInvite, refetch: fetchData };
+  return { invites, members, loading, error, revokeInvite, refetch: fetchData };
 }

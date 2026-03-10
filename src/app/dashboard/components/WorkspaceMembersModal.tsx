@@ -19,7 +19,7 @@ type Props = {
 
 export function WorkspaceMembersModal({ workspaceId, workspaceName, currentUserId, userRole, onClose }: Props) {
   const router = useRouter();
-  const { invites, members, loading, revokeInvite, refetch } = useWorkspaceInvites(workspaceId);
+  const { invites, members, loading, error: fetchError, revokeInvite, refetch } = useWorkspaceInvites(workspaceId);
   const [email, setEmail] = useState("");
   const [sending, setSending] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
@@ -181,6 +181,13 @@ export function WorkspaceMembersModal({ workspaceId, workspaceName, currentUserI
               }`}
             >
               {message.text}
+            </div>
+          )}
+
+          {/* Fetch error */}
+          {fetchError && (
+            <div className="rounded-xl px-4 py-3 text-sm bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400">
+              {fetchError}
             </div>
           )}
 
