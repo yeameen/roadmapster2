@@ -35,6 +35,10 @@ DashboardClient
 
 All hooks accept nullable IDs and auto-refetch when the ID changes (e.g., switching teams). They use optimistic updates with error-recovery refetch.
 
+### Workspace invites
+
+Server actions in `dashboard/actions.ts` handle invite/remove/rename. `createAdminClient()` (`src/lib/supabase/admin.ts`) uses the service-role key to bypass RLS for cross-user operations (adding members, looking up users by email in `auth.users`). Two SECURITY DEFINER RPCs: `accept_pending_invites()` auto-accepts invites on sign-up, `get_workspace_members_with_email()` joins members with auth emails.
+
 ### Auth flow
 
 Middleware (`src/middleware.ts` → `src/lib/supabase/middleware.ts`) refreshes the Supabase session on every request and redirects unauthenticated users to `/login`. Login supports email/password and Google OAuth. On first sign-in, `ensureWorkspace()` auto-creates a workspace via a DB trigger that also inserts the owner membership row.
@@ -58,11 +62,12 @@ Portal-based (`Modal.tsx`), with Escape/backdrop-close, `inert` attribute on bac
 ## Key conventions
 
 - **Hook pattern**: One hook per file in `src/hooks/`, named `use<Entity>`. Returns `{ data, loading, error, CRUD actions, refetch }`.
-- **Supabase queries**: All go through RLS. Helper functions `user_workspace_ids()`, `user_team_ids()`, `user_quarter_ids()` (SECURITY DEFINER) prevent recursive policy evaluation.
+- **Supabase queries**: All go through RLS. Helper functions `user_workspace_ids()`, `user_team_ids()`, `user_quarter_ids()` (SECURITY DEFINER) prevent recursive policy evaluation. Additional RPCs: `accept_pending_invites()`, `get_workspace_members_with_email(ws_id)`.
+- **Admin client**: `createAdminClient()` in `src/lib/supabase/admin.ts` uses `SUPABASE_SERVICE_ROLE_KEY` for server-side operations that bypass RLS (e.g., adding workspace members, querying `auth.users`). Only use in server actions, never expose to client.
 - **TEAM_DEFAULTS sync**: Constants in `src/lib/constants.ts` are duplicated in the SQL migration (`supabase/migrations/20260307000000_initial_schema.sql`). Keep both in sync.
 - **Design system**: Stone palette, amber-500 accent, `rounded-2xl` cards, `rounded-xl` buttons/inputs, `shadow-warm`/`shadow-warm-md`. Button text on amber backgrounds uses `text-stone-900` (not white) for WCAG AA contrast.
 - **RLS + INSERT RETURNING gotcha**: Cannot `.select()` after `.insert()` on workspaces because the SELECT policy requires membership created by an AFTER INSERT trigger that hasn't committed yet. Insert first, query separately.
 
 ## Database
 
-7 tables: `workspaces` → `workspace_members`, `teams` → `planning_members`, `quarters` → `quarter_members`, `epics`. All scoped by workspace membership via RLS. Epics have nullable `quarter_id` (null = backlog). Quarters store `holidays text[]` and compute `working_days` in the application layer.
+8 tables: `workspaces` → `workspace_members` + `workspace_invites`, `teams` → `planning_members`, `quarters` → `quarter_members`, `epics`. All scoped by workspace membership via RLS. Epics have nullable `quarter_id` (null = backlog). Quarters store `holidays text[]` and compute `working_days` in the application layer. Workspace invites track pending/accepted/revoked email invitations with 30-day expiry.
