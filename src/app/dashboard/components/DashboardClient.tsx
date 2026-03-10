@@ -67,8 +67,28 @@ export function DashboardClient({ workspaceId, workspaceName, userId, userRole }
 
   if (teamsLoading) {
     return (
-      <div className="flex items-center justify-center py-24">
-        <p className="text-sm text-stone-500 dark:text-stone-400">Loading...</p>
+      <div className="space-y-6 py-6">
+        <div className="flex items-center justify-between">
+          <div className="space-y-2">
+            <div className="h-5 w-40 animate-pulse rounded-lg bg-stone-200 dark:bg-stone-700" />
+            <div className="h-4 w-56 animate-pulse rounded-lg bg-stone-100 dark:bg-stone-800" />
+          </div>
+          <div className="flex gap-2">
+            <div className="h-8 w-24 animate-pulse rounded-xl bg-stone-200 dark:bg-stone-700" />
+            <div className="h-8 w-20 animate-pulse rounded-xl bg-stone-200 dark:bg-stone-700" />
+          </div>
+        </div>
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <div className="space-y-3">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-14 animate-pulse rounded-xl bg-stone-100 dark:bg-stone-800" />
+            ))}
+          </div>
+          <div className="space-y-3">
+            <div className="h-32 animate-pulse rounded-2xl bg-stone-100 dark:bg-stone-800" />
+            <div className="h-32 animate-pulse rounded-2xl bg-stone-100 dark:bg-stone-800" />
+          </div>
+        </div>
       </div>
     );
   }
@@ -163,6 +183,7 @@ export function DashboardClient({ workspaceId, workspaceName, userId, userRole }
           title="Add team"
         >
           <Plus className="h-4 w-4" />
+          <span className="hidden sm:inline">Add team</span>
         </button>
       </div>
 
@@ -176,27 +197,27 @@ export function DashboardClient({ workspaceId, workspaceName, userId, userRole }
                 {members.length} member{members.length !== 1 ? "s" : ""} · {quarters.length} quarter{quarters.length !== 1 ? "s" : ""} · {epics.length} epic{epics.length !== 1 ? "s" : ""}
               </p>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 overflow-x-auto">
               <button
                 onClick={() => setShowWorkspaceMembers(true)}
-                className="flex items-center gap-2 rounded-xl border border-stone-300 dark:border-stone-600 px-3 py-1.5 text-sm font-medium text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800"
+                className="flex shrink-0 items-center gap-2 rounded-xl bg-amber-500 px-3 py-1.5 text-sm font-medium text-stone-900 hover:bg-amber-600"
               >
                 <Users className="h-4 w-4" />
                 Members
               </button>
               <button
                 onClick={handleExport}
-                className="flex items-center gap-2 rounded-xl border border-stone-300 dark:border-stone-600 px-3 py-1.5 text-sm font-medium text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800"
+                className="flex shrink-0 items-center gap-2 rounded-xl border border-stone-300 dark:border-stone-600 px-3 py-1.5 text-sm font-medium text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800"
               >
                 <Download className="h-4 w-4" />
                 Export
               </button>
               <button
                 onClick={() => setShowSettings(true)}
-                className="flex items-center gap-2 rounded-xl border border-stone-300 dark:border-stone-600 px-3 py-1.5 text-sm font-medium text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800"
+                className="flex shrink-0 items-center gap-2 rounded-xl border border-stone-300 dark:border-stone-600 px-3 py-1.5 text-sm font-medium text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800"
               >
                 <Settings className="h-4 w-4" />
-                Team Settings
+                Settings
               </button>
             </div>
           </div>

@@ -77,7 +77,7 @@ export function QuarterCard({
                 <span
                   className={`rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_COLORS[quarter.status]}`}
                 >
-                  {quarter.status}
+                  {quarter.status.charAt(0).toUpperCase() + quarter.status.slice(1)}
                 </span>
               </div>
               <p className="mt-0.5 text-xs text-stone-500 dark:text-stone-400">
@@ -129,7 +129,7 @@ export function QuarterCard({
                 Drop epics here
               </p>
             ) : (
-              <div className="space-y-1.5">
+              <div className="space-y-2">
                 {epics.map((epic) => (
                   <SortableEpicCard
                     key={epic.id}
