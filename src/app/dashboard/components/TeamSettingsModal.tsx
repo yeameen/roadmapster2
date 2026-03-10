@@ -1,14 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { X, Plus, Trash2, Link, ExternalLink } from "lucide-react";
+import { X, Plus, Trash2, Link, ExternalLink, Download } from "lucide-react";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { Modal } from "./Modal";
-import type { Team, PlanningMember, JiraConnection, JiraTeamMapping } from "@/lib/types";
+import type { Team, PlanningMember, Quarter, Epic, QuarterMember, JiraConnection, JiraTeamMapping } from "@/lib/types";
 
 type Props = {
   team: Team;
   members: PlanningMember[];
+  quarters: Quarter[];
+  epics: Epic[];
+  quarterMembersMap: Record<string, QuarterMember[]>;
   workspaceId: string;
   jiraConnection: JiraConnection | null;
   jiraMapping: JiraTeamMapping | null;
@@ -23,6 +26,9 @@ type Props = {
 export function TeamSettingsModal({
   team,
   members,
+  quarters,
+  epics,
+  quarterMembersMap,
   jiraConnection,
   jiraMapping,
   onOpenJiraSettings,
@@ -194,6 +200,62 @@ export function TeamSettingsModal({
                 </li>
               )}
             </ul>
+          </div>
+
+          {/* Export */}
+          <div className="mt-6 border-t border-stone-200 dark:border-stone-700 pt-4">
+            <h3 className="text-sm font-semibold text-stone-900 dark:text-white">
+              Export Data
+            </h3>
+            <p className="mt-1 text-xs text-stone-500 dark:text-stone-400">
+              Download this team&apos;s roadmap as a JSON file — includes team
+              settings, members, quarters, epics, and backlog. Useful for
+              backups or sharing outside Roadmapster.
+            </p>
+            <button
+              onClick={() => {
+                const data = {
+                  team: {
+                    name: team.name,
+                    buffer_percentage: team.buffer_percentage,
+                    oncall_per_sprint: team.oncall_per_sprint,
+                    sprints_per_quarter: team.sprints_per_quarter,
+                    default_working_days: team.default_working_days,
+                  },
+                  members: members.map((m) => ({ name: m.name, skills: m.skills })),
+                  quarters: quarters.map((q) => ({
+                    name: q.name,
+                    status: q.status,
+                    working_days: q.working_days,
+                    start_date: q.start_date,
+                    end_date: q.end_date,
+                    members: (quarterMembersMap[q.id] ?? []).map((qm) => {
+                      const member = members.find((m) => m.id === qm.planning_member_id);
+                      return { name: member?.name ?? "Unknown", vacation_days: qm.vacation_days };
+                    }),
+                    epics: epics
+                      .filter((e) => e.quarter_id === q.id)
+                      .sort((a, b) => a.position - b.position)
+                      .map((e) => ({ title: e.title, size: e.size, priority: e.priority, description: e.description, owner: e.owner })),
+                  })),
+                  backlog: epics
+                    .filter((e) => !e.quarter_id)
+                    .map((e) => ({ title: e.title, size: e.size, priority: e.priority, description: e.description, owner: e.owner })),
+                  exported_at: new Date().toISOString(),
+                };
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = `${team.name.toLowerCase().replace(/\s+/g, "-")}-roadmap-${new Date().toISOString().slice(0, 10)}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+              }}
+              className="mt-3 flex items-center gap-2 rounded-xl border border-stone-300 dark:border-stone-600 px-3 py-1.5 text-xs font-medium text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800"
+            >
+              <Download className="h-3.5 w-3.5" />
+              Export as JSON
+            </button>
           </div>
 
           {/* Jira Integration */}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Download, Plus, Settings, Users } from "lucide-react";
+import { Plus, Settings, Users } from "lucide-react";
 import { useTeams } from "@/hooks/useTeams";
 import { usePlanningMembers } from "@/hooks/usePlanningMembers";
 import { useQuarters } from "@/hooks/useQuarters";
@@ -102,59 +102,6 @@ export function DashboardClient({ workspaceId, workspaceName, userId, userRole }
     );
   }
 
-  function handleExport() {
-    if (!activeTeam) return;
-    const data = {
-      team: {
-        name: activeTeam.name,
-        buffer_percentage: activeTeam.buffer_percentage,
-        oncall_per_sprint: activeTeam.oncall_per_sprint,
-        sprints_per_quarter: activeTeam.sprints_per_quarter,
-        default_working_days: activeTeam.default_working_days,
-      },
-      members: members.map((m) => ({ name: m.name, skills: m.skills })),
-      quarters: quarters.map((q) => ({
-        name: q.name,
-        status: q.status,
-        working_days: q.working_days,
-        start_date: q.start_date,
-        end_date: q.end_date,
-        members: (quarterMembersMap[q.id] ?? []).map((qm) => {
-          const member = members.find((m) => m.id === qm.planning_member_id);
-          return { name: member?.name ?? "Unknown", vacation_days: qm.vacation_days };
-        }),
-        epics: epics
-          .filter((e) => e.quarter_id === q.id)
-          .sort((a, b) => a.position - b.position)
-          .map((e) => ({
-            title: e.title,
-            size: e.size,
-            priority: e.priority,
-            description: e.description,
-            owner: e.owner,
-          })),
-      })),
-      backlog: epics
-        .filter((e) => !e.quarter_id)
-        .map((e) => ({
-          title: e.title,
-          size: e.size,
-          priority: e.priority,
-          description: e.description,
-          owner: e.owner,
-        })),
-      exported_at: new Date().toISOString(),
-    };
-
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${activeTeam.name.toLowerCase().replace(/\s+/g, "-")}-roadmap-${new Date().toISOString().slice(0, 10)}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-  }
-
   if (teams.length === 0) {
     return (
       <div className="py-12">
@@ -218,13 +165,6 @@ export function DashboardClient({ workspaceId, workspaceName, userId, userRole }
                 <JiraSyncButton teamId={activeTeam.id} mapping={jiraMapping} />
               )}
               <button
-                onClick={handleExport}
-                className="flex shrink-0 items-center gap-2 rounded-xl border border-stone-300 dark:border-stone-600 px-3 py-1.5 text-sm font-medium text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800"
-              >
-                <Download className="h-4 w-4" />
-                Export
-              </button>
-              <button
                 onClick={() => setShowSettings(true)}
                 className="flex shrink-0 items-center gap-2 rounded-xl border border-stone-300 dark:border-stone-600 px-3 py-1.5 text-sm font-medium text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800"
               >
@@ -271,6 +211,9 @@ export function DashboardClient({ workspaceId, workspaceName, userId, userRole }
             <TeamSettingsModal
               team={activeTeam}
               members={members}
+              quarters={quarters}
+              epics={epics}
+              quarterMembersMap={quarterMembersMap}
               workspaceId={workspaceId}
               jiraConnection={jiraConnection}
               jiraMapping={jiraMapping}
