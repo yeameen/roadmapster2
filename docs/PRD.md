@@ -1,11 +1,11 @@
-# Roadmapster - Product Requirements Document (Rewrite)
+# Roadmapster - Product Requirements Document
 
 ## Document Purpose
 
-This PRD defines Roadmapster for a clean rebuild. It incorporates lessons learned from the V1 implementation, avoids repeating known mistakes, and provides enough detail to build without assuming knowledge of the existing codebase.
+This PRD defines Roadmapster. It incorporates lessons learned from the V1 implementation, avoids repeating known mistakes, and reflects the current state of the shipped product.
 
-**Status**: Rewrite baseline
-**Date**: March 2026
+**Status**: Current (reflects implemented state)
+**Last updated**: March 2026
 
 ---
 
@@ -57,39 +57,44 @@ These are constraints, not aspirations.
 ## 5. Core Concepts
 
 ### Workspace
-The top-level container for a customer's data. A signed-in user belongs to one workspace. All teams and plans are scoped to it.
+The top-level container for a customer's data. A signed-in user can belong to multiple workspaces (via invites) and switch between them. All teams and plans are scoped to a workspace.
 
 ### Team
-The unit that owns a roadmap. A workspace may contain multiple teams, but the user plans one team at a time. A team has default settings (buffer percentage, on-call config) that serve as defaults when creating new quarters.
+The unit that owns a roadmap. A workspace may contain multiple teams, and the user can switch between them via tabs. A team has default settings (buffer percentage, on-call config) that serve as defaults when creating new quarters.
 
 ### Planning Member
 A person counted in capacity calculations. Has a name and optional skills. Does **not** need a product login. Their availability (vacation days) is configured **per quarter**, not globally.
 
 ### Quarter
-A planning bucket with its own capacity settings and lifecycle status. Each quarter stores its own working days and per-member availability overrides.
+A planning bucket with its own capacity settings and lifecycle status. Each quarter has required start/end dates and an optional holidays list. Working days are auto-calculated from the date range minus weekends and holidays.
 
 ### Epic
-A roadmap item sized in t-shirt sizes. Either unscheduled (in backlog) or assigned to a quarter.
+A roadmap item sized in t-shirt sizes. Either unscheduled (in backlog) or assigned to a quarter. Can optionally be linked to a Jira epic for story-level progress tracking.
 
 ---
 
 ## 6. Scope
 
-### In scope for the rewrite
+### Implemented
 
 - Authenticated web application (Google OAuth + email/password)
 - Cloud-backed persistence via Supabase
-- Workspace and team creation
+- Workspace and team creation with multi-team support
+- Workspace member invites and sharing
 - Quarter-based capacity planning with per-quarter member availability
+- Working days auto-calculation from quarter dates minus weekends and holidays
 - Epic backlog management with priority grouping
 - Drag-and-drop scheduling between backlog and quarters
 - Quarter-level capacity calculation and enforcement
-- Multi-user access to shared team data
-- Data export
+- Multi-user access to shared team data with workspace-level RLS
+- Data export (JSON)
+- One-way Jira import/sync (epics and stories via OAuth)
+- Dark/light/system theme toggle
+- "Warm Studio" design system (stone palette, amber accent)
 
 ### Explicitly out of scope
 
-- Jira, HR, or calendar integrations
+- HR or calendar integrations
 - Sprint planning within quarters
 - Dependency graph visualization
 - Scenario modeling and forecasting
@@ -97,6 +102,7 @@ A roadmap item sized in t-shirt sizes. Either unscheduled (in backlog) or assign
 - Real-time multi-cursor collaboration
 - Portfolio planning across teams in one view
 - Quarter templates
+- Two-way Jira sync (write-back to Jira)
 
 ---
 
@@ -106,14 +112,18 @@ A roadmap item sized in t-shirt sizes. Either unscheduled (in backlog) or assign
 
 - Users must sign in before accessing any roadmap data.
 - Supported sign-in: Google OAuth and email/password via Supabase Auth.
-- On first sign-in, create a default workspace for the user.
+- On first sign-in, auto-accept any pending workspace invites matching the user's email. If no pending invites exist, create a default workspace for the user.
 - Team data is visible only to users in the same workspace.
 
 ### 7.2 Workspace and Team Setup
 
-**Workspace**: Created automatically on first sign-in. Has a name (editable).
+**Workspace**: Created automatically on first sign-in (unless joining via invite). Has a name (editable by owner).
 
-**Team**: Created by the user within their workspace.
+**Workspace members**: Users can be invited to a workspace by email. Invites are pending until the invitee signs up, then auto-accepted. Invites expire after 30 days. Workspace owners/admins can remove members and revoke pending invites.
+
+**Workspace switcher**: Users who belong to multiple workspaces can switch between them from the dashboard header.
+
+**Team**: Created by the user within their workspace. A workspace can have multiple teams, navigable via tabs.
 
 Each team has default settings that pre-populate new quarters:
 - Buffer percentage (default: 20%)
@@ -137,9 +147,10 @@ Users can:
 Each quarter has:
 - Name (e.g., "Q2 2026")
 - Status: `planning`, `active`, or `completed` (editable field, not a workflow action)
-- Working days (defaults from team settings, overridable per quarter)
-- Start date (optional)
-- End date (optional)
+- Start date (required)
+- End date (required)
+- Holidays (optional list of dates to exclude from working days)
+- Working days (auto-calculated from start/end dates minus weekends and holidays; overridable)
 - Display order
 
 **Per-quarter member availability**: Each quarter stores availability for each planning member. When a quarter is created, it initializes availability for all current team members with 0 vacation days. Users then set vacation days per member per quarter.
@@ -162,6 +173,13 @@ Each epic has:
 - Priority: `P0`, `P1`, `P2`, `P3` (required)
 - Description (optional)
 - Owner name (optional, free text)
+
+Jira-synced epics additionally store:
+- Jira epic ID and key
+- Jira URL
+- Story points (from Jira)
+- Size override flag (whether the user manually set the size vs auto-mapped from story points)
+- Last synced timestamp
 
 ### 7.5 Planning Board
 
@@ -198,6 +216,10 @@ Each epic has:
 | L    | 40   |
 | XL   | 60   |
 
+**Working days calculation**:
+
+Working days are auto-calculated from the quarter's start and end dates by counting weekdays (Mon-Fri) and subtracting any listed holidays. This is implemented as a pure function in `workingDays.ts` (13 unit tests).
+
 **Quarter capacity calculation**:
 
 ```
@@ -231,7 +253,55 @@ On-call and buffer settings come from the team defaults (could be overridden per
 
 - All data persists to Supabase (PostgreSQL).
 - No localStorage as primary storage. Local state is used only for UI responsiveness (optimistic updates).
-- Export roadmap data as JSON for backup.
+- Export roadmap data as JSON for backup (available in Team Settings modal).
+
+### 7.9 Jira Integration
+
+One-way import/sync from Jira Cloud. Epics and their child stories are imported into Roadmapster for progress tracking. This is read-only — no data is written back to Jira.
+
+**Connection flow**:
+- Workspace owner initiates Jira OAuth 2.0 with PKCE via `/api/jira/authorize`
+- Callback at `/api/jira/callback` exchanges the auth code for access/refresh tokens
+- Connection stored per-workspace in `jira_connections` (one Jira site per workspace)
+- Disconnect removes the connection record
+
+**Team mapping**:
+- Each team can optionally map to a Jira project key or custom JQL filter
+- Configurable epic issue type (default: "Epic")
+- Auto-sync toggle for scheduled background syncing (cron endpoint at `/api/cron/jira-sync`)
+
+**Sync behavior**:
+- Imports Jira epics matching the team's project/JQL filter
+- For each epic, imports child stories with: key, title, status, status category (`new`/`indeterminate`/`done`), assignee, story points, issue type, Jira URL
+- Jira story points are auto-mapped to t-shirt sizes (users can override)
+- Sync status tracked per team mapping: `idle`, `syncing`, `error`
+
+**UI**:
+- Jira settings accessible from Team Settings modal
+- Project picker dropdown for available Jira projects
+- Manual sync button with status indicator
+- Epic cards show a progress badge for synced epics (e.g., "3/5 done")
+- Epic stories modal shows all child stories with status and aggregations
+
+### 7.10 Theme System
+
+Three-mode theme toggle: system, light, dark.
+
+- Persists selection to localStorage as `theme-mode`
+- Inline script in `<head>` reads preference before hydration to prevent flash
+- Toggles `.dark` class on `<html>`, using Tailwind's `@custom-variant dark`
+- System mode tracks OS preference via `prefers-color-scheme` media query
+
+### 7.11 Design System
+
+"Warm Studio" design language:
+
+- **Palette**: `stone-*` (warm gray) backgrounds and text, `amber-500` accent
+- **Cards**: `rounded-2xl` with warm shadows (`shadow-warm` / `shadow-warm-md` using `rgba(120,100,70,...)`)
+- **Buttons/inputs**: `rounded-xl`
+- **Status colors**: planning = amber, active = green, completed = stone
+- **Size colors**: XS = blue, S = cyan, M = purple, L = orange, XL = red
+- **Contrast**: Text on amber backgrounds uses `text-stone-900` (not white) for WCAG AA compliance
 
 ---
 
@@ -242,8 +312,7 @@ On-call and buffer settings come from the team defaults (could be overridden per
 1. **No organization table.** Workspace is the top-level entity. An organization layer adds complexity with no current value.
 2. **Vacation days are per quarter, not per member.** A member's availability varies each quarter. Store this on a join table between quarters and planning members.
 3. **Planning members are team-scoped, not user-scoped.** They are names in a capacity model, not authenticated users.
-4. **Only build tables you need now.** No comments, templates, audit logs, or dependency tables until those features exist.
-5. **Quarter stores its own capacity settings.** Working days live on the quarter, not the team.
+4. **Quarter stores its own capacity settings.** Working days live on the quarter, not the team.
 
 ### Tables
 
@@ -262,6 +331,16 @@ workspace_members
   role: text ('owner' | 'admin' | 'member')
   created_at: timestamptz
   UNIQUE(workspace_id, user_id)
+
+workspace_invites
+  id: uuid PK
+  workspace_id: uuid FK -> workspaces (ON DELETE CASCADE)
+  email: text
+  invited_by: uuid FK -> auth.users
+  status: text ('pending' | 'accepted' | 'revoked')
+  created_at: timestamptz
+  expires_at: timestamptz (default: 30 days from creation)
+  UNIQUE(workspace_id, email)
 
 teams
   id: uuid PK
@@ -289,8 +368,9 @@ quarters
   name: text
   status: text ('planning' | 'active' | 'completed')
   working_days: integer
-  start_date: date (nullable)
-  end_date: date (nullable)
+  start_date: date (NOT NULL)
+  end_date: date (NOT NULL)
+  holidays: text[] (default '{}')
   display_order: integer
   created_at: timestamptz
   updated_at: timestamptz
@@ -312,6 +392,53 @@ epics
   quarter_id: uuid FK -> quarters (ON DELETE SET NULL, nullable)
   position: integer (default 0)
   owner: text (nullable, free text)
+  jira_epic_id: text (nullable)
+  jira_epic_key: text (nullable)
+  jira_url: text (nullable)
+  story_points: numeric (nullable)
+  size_override: boolean (default false)
+  last_synced_at: timestamptz (nullable)
+  created_at: timestamptz
+  updated_at: timestamptz
+
+jira_connections
+  id: uuid PK
+  workspace_id: uuid FK -> workspaces (ON DELETE CASCADE, UNIQUE)
+  atlassian_cloud_id: text
+  atlassian_site_url: text
+  access_token: text
+  refresh_token: text
+  token_expires_at: timestamptz
+  scopes: text[] (default '{}')
+  connected_by: uuid FK -> auth.users
+  created_at: timestamptz
+  updated_at: timestamptz
+
+jira_team_mappings
+  id: uuid PK
+  team_id: uuid FK -> teams (ON DELETE CASCADE, UNIQUE)
+  jira_project_key: text (nullable)
+  jira_filter_jql: text (nullable)
+  epic_issue_type: text (default 'Epic')
+  last_synced_at: timestamptz (nullable)
+  sync_status: text ('idle' | 'syncing' | 'error', default 'idle')
+  sync_error: text (nullable)
+  auto_sync_enabled: boolean (default false)
+  created_at: timestamptz
+  updated_at: timestamptz
+
+jira_stories
+  id: uuid PK
+  epic_id: uuid FK -> epics (ON DELETE CASCADE)
+  jira_issue_id: text
+  jira_issue_key: text (UNIQUE)
+  title: text
+  status: text
+  status_category: text ('new' | 'indeterminate' | 'done')
+  assignee: text (nullable)
+  story_points: numeric (nullable)
+  issue_type: text
+  jira_url: text
   created_at: timestamptz
   updated_at: timestamptz
 ```
@@ -322,10 +449,10 @@ epics
 
 **Strategy for the rewrite**:
 - Gate access at the **workspace level only**. Use `workspace_members` to determine access. This table has a simple, non-recursive check: `user_id = auth.uid()`.
-- All other tables derive access through their `team.workspace_id` path, using a **security-definer function** to avoid RLS recursion.
+- All other tables derive access through their `team.workspace_id` path, using **security-definer functions** to avoid RLS recursion.
 
 ```sql
--- Helper function (SECURITY DEFINER to bypass RLS)
+-- Helper functions (SECURITY DEFINER to bypass RLS)
 CREATE FUNCTION user_workspace_ids(user_uuid uuid)
 RETURNS SETOF uuid
 LANGUAGE sql SECURITY DEFINER STABLE
@@ -333,13 +460,26 @@ AS $$
   SELECT workspace_id FROM workspace_members WHERE user_id = user_uuid;
 $$;
 
--- Then all policies use:
--- USING (team_id IN (
---   SELECT id FROM teams WHERE workspace_id IN (SELECT user_workspace_ids(auth.uid()))
--- ))
+CREATE FUNCTION user_team_ids(user_uuid uuid)
+RETURNS SETOF uuid
+LANGUAGE sql SECURITY DEFINER STABLE
+AS $$
+  SELECT id FROM teams WHERE workspace_id IN (SELECT user_workspace_ids(user_uuid));
+$$;
+
+CREATE FUNCTION user_quarter_ids(user_uuid uuid)
+RETURNS SETOF uuid
+LANGUAGE sql SECURITY DEFINER STABLE
+AS $$
+  SELECT id FROM quarters WHERE team_id IN (SELECT user_team_ids(user_uuid));
+$$;
 ```
 
-This avoids the circular dependency that plagued V1.
+Additional RPCs for workspace management:
+- `accept_pending_invites()` — auto-accepts pending invites matching the current user's email on sign-up
+- `get_workspace_members_with_email(ws_id)` — joins workspace members with `auth.users` to return emails
+
+**Admin client**: Server actions that need to bypass RLS (e.g., adding workspace members, querying `auth.users` by email) use `createAdminClient()` with the `SUPABASE_SERVICE_ROLE_KEY`. Only used in server actions, never exposed to the client.
 
 ### Indexes
 
@@ -349,6 +489,8 @@ CREATE INDEX idx_quarters_team ON quarters(team_id);
 CREATE INDEX idx_planning_members_team ON planning_members(team_id);
 CREATE INDEX idx_quarter_members_quarter ON quarter_members(quarter_id);
 CREATE INDEX idx_workspace_members_user ON workspace_members(user_id);
+CREATE INDEX idx_workspace_invites_email ON workspace_invites(email);
+CREATE INDEX idx_jira_stories_epic ON jira_stories(epic_id);
 ```
 
 ---
@@ -359,12 +501,12 @@ CREATE INDEX idx_workspace_members_user ON workspace_members(user_id);
 
 | Layer | Choice | Rationale |
 |-------|--------|-----------|
-| Framework | Next.js (App Router) | Worked well in V1. API routes + SSR + React in one package. |
+| Framework | Next.js 16 (App Router) | API routes + SSR + React 19 in one package. |
 | Language | TypeScript | Non-negotiable for a data-heavy app. |
 | Database | Supabase (PostgreSQL) | Auth + DB + realtime in one service. V1 validated this choice. |
 | Auth | Supabase Auth (Google OAuth + email) | Avoids rolling custom auth. |
 | Drag & Drop | @dnd-kit | Worked well in V1 once IDs were disambiguated. |
-| Styling | Tailwind CSS | Replaces raw CSS3 from V1 for faster development and consistency. |
+| Styling | Tailwind CSS 4 | Replaces raw CSS3 from V1 for faster development and consistency. |
 | Icons | Lucide React | Lightweight, worked well. |
 | Hosting | Vercel | Native Next.js support. |
 | Testing | Playwright (E2E), Vitest (unit) | Playwright proved valuable in V1. Add Vitest for unit tests. |
@@ -387,42 +529,72 @@ CREATE INDEX idx_workspace_members_user ON workspace_members(user_id);
 
 6. **Capacity calculation is a pure function.** It takes planning members with vacation days, quarter working days, team on-call/buffer settings, and assigned epics. It returns capacity numbers. Keep it stateless and easily testable.
 
-### Recommended component structure
+### Component structure
 
 ```
 app/
-  layout.tsx                    # Root layout with auth provider
+  layout.tsx                    # Root layout with theme script
   page.tsx                      # Landing / redirect to dashboard
-  login/page.tsx                # Login page
+  login/
+    page.tsx                    # Login page
+    actions.ts                  # Server actions: login, signup, signOut, loginWithGoogle
   auth/callback/route.ts        # OAuth callback handler
+  api/jira/
+    authorize/route.ts          # Jira OAuth initiation
+    callback/route.ts           # Jira OAuth callback
+    sync/route.ts               # Manual Jira sync trigger
+    disconnect/route.ts         # Jira disconnect
+    projects/route.ts           # Fetch available Jira projects
+  api/cron/jira-sync/route.ts   # Scheduled Jira sync endpoint
   dashboard/
-    page.tsx                    # Main planning board
+    page.tsx                    # Server component: auth + workspace fetch
+    actions.ts                  # Server actions: invite, remove member, rename workspace
+    sign-out-button.tsx         # Sign-out form action
     components/
+      DashboardClient.tsx       # Client-side orchestrator (wires hooks + UI)
       PlanningBoard.tsx         # DndContext wrapper, two-panel layout
       BacklogPanel.tsx          # Left panel
-      QuartersPanel.tsx         # Right panel
       QuarterCard.tsx           # Single quarter (collapsed or expanded)
       EpicCard.tsx              # Single epic card with drag handle
       EpicFormModal.tsx         # Create/edit epic
       QuarterFormModal.tsx      # Create/edit quarter
       CapacityBar.tsx           # Capacity visualization
-      TeamSettingsModal.tsx     # Team and planning member config
+      TeamSettingsModal.tsx     # Team settings, planning members, export, Jira config
       QuarterMembersModal.tsx   # Per-quarter vacation day editor
+      CreateTeamForm.tsx        # New team creation
+      WorkspaceSwitcher.tsx     # Multi-workspace dropdown
+      WorkspaceMembersModal.tsx # Invite/remove workspace members
+      Modal.tsx                 # Base portal modal with focus trapping
+      JiraSettingsModal.tsx     # Jira connection and team mapping config
+      JiraSyncButton.tsx        # Manual sync trigger with status
+      JiraProjectPicker.tsx     # Jira project dropdown
+      EpicProgressBadge.tsx     # Jira story completion badge
+      EpicStoriesModal.tsx      # Jira stories list for an epic
+  components/
+    ThemeProvider.tsx            # Three-mode theme context
+    ThemeToggle.tsx              # Cycling monitor/sun/moon button
   lib/
     supabase/
-      client.ts                # Browser Supabase client
-      server.ts                # Server Supabase client
-      middleware.ts             # Auth middleware
-    capacity.ts                # Pure capacity calculation functions
-    types.ts                   # TypeScript types (flat, no embedded arrays)
-    constants.ts               # T-shirt sizes, colors, etc.
+      client.ts                 # Browser Supabase client
+      server.ts                 # Server Supabase client (cookie-aware)
+      middleware.ts              # Auth middleware helper
+      admin.ts                  # Service-role client for privileged ops
+    capacity.ts                 # Pure capacity calculation (14 unit tests)
+    workingDays.ts              # Working days from dates minus holidays (13 unit tests)
+    workspace.ts                # ensureWorkspace() for auto-creation on first sign-in
+    types.ts                    # TypeScript types (flat, no embedded arrays)
+    constants.ts                # T-shirt sizes, colors, team defaults, droppable IDs
   hooks/
-    useWorkspace.ts
-    useTeam.ts
-    usePlanningMembers.ts
-    useQuarters.ts
-    useEpics.ts
-    useQuarterMembers.ts
+    useTeams.ts                 # Team CRUD + switching
+    usePlanningMembers.ts       # Planning member CRUD
+    useQuarters.ts              # Quarter CRUD
+    useEpics.ts                 # Epic CRUD + backlog
+    useQuarterMembers.ts        # Per-quarter vacation days
+    useTeamQuarterMembers.ts    # Batch capacity data for all quarters
+    useWorkspaceInvites.ts      # Pending invites management
+    useJiraConnection.ts        # Jira OAuth connection state
+    useJiraTeamMapping.ts       # Jira team mapping CRUD
+    useJiraStories.ts           # Jira stories for an epic
 ```
 
 ---
@@ -438,6 +610,7 @@ app/
 - Capacity bar per quarter with green/amber/red thresholds.
 - Clear drop zone highlighting during drag.
 - Drag overlay showing the epic being moved.
+- Jira-synced epics show progress badges with story completion.
 
 ### Empty states
 - Empty backlog: prompt to add first epic.
@@ -458,13 +631,13 @@ app/
 - Drag-and-drop response under 100ms
 - Reliable persistence: no data loss on reload or across devices
 - Workspace-level access isolation
-- Test coverage for: auth flow, team setup, epic CRUD, quarter CRUD, drag-and-drop, capacity calculations, persistence
+- Test coverage for: auth flow, team setup, epic CRUD, quarter CRUD, drag-and-drop, capacity calculations, working days calculation, persistence
 
 ---
 
 ## 13. Build Order
 
-### Phase 1: Core single-team planner
+### Phase 1: Core single-team planner [COMPLETE]
 
 1. Supabase project setup (schema, auth, RLS with the security-definer approach)
 2. Authentication (login, callback, session middleware)
@@ -477,16 +650,35 @@ app/
 9. Capacity calculations and enforcement
 10. Data export
 
-### Phase 2: Shared team usage
+### Phase 2: Shared team usage [COMPLETE]
 
-- Multiple teams per workspace
-- Team switching
-- Invite users to workspace
-- Access control hardening
+1. Multiple teams per workspace with tab switching
+2. Workspace member invites (email-based, 30-day expiry, auto-accept on sign-up)
+3. Workspace member management (remove members, revoke invites)
+4. Workspace switcher for multi-workspace users
+5. Access control hardening (RLS helper functions, admin client pattern)
+
+### Phase 3: Jira integration [COMPLETE]
+
+1. Jira OAuth 2.0 with PKCE (connect/disconnect flow)
+2. Team-level Jira project/JQL mapping configuration
+3. One-way epic import from Jira
+4. Story sync with status categorization and aggregation
+5. Epic progress badges and stories modal
+6. Auto-sync infrastructure (cron endpoint)
+
+### Phase 4: Polish [IN PROGRESS]
+
+- Dark/light/system theme toggle
+- "Warm Studio" design system
+- Loading skeletons
+- Mobile responsiveness
+- E2E tests (Playwright)
+- Google Auth local testing
 
 ### Later, if needed
 
-- Integrations (Jira, calendars)
+- Two-way Jira sync (write-back)
 - Dependency management
 - Audit history
 - Comments on epics
@@ -497,23 +689,26 @@ app/
 
 ## 14. Success Criteria
 
-The rewrite is successful when a user can:
+The product is successful when a user can:
 
-1. Sign in with Google
+1. Sign in with Google or email/password
 2. Land in their workspace with a team creation prompt
 3. Create a team with planning members
-4. Create two quarters with per-member vacation days
+4. Create two quarters with start/end dates and per-member vacation days
 5. Create and prioritize epics
 6. Drag epics into quarters and see capacity update correctly
 7. Be prevented from over-allocating a quarter
 8. Reload and find the same data persisted
 9. Export their roadmap as JSON
+10. Invite a colleague to their workspace and share planning data
+11. Connect Jira and see epic stories synced with progress tracking
+12. Switch between light and dark themes
 
 ---
 
 ## 15. Open Decisions
 
-- Whether to support read-only users (viewers) or only editors in Phase 1
-- Whether export ships in Phase 1 or Phase 2
-- Whether to use Tailwind CSS or stick with CSS modules (team preference)
+- Whether to support read-only users (viewers) or only editors
 - Exact behavior when a planning member is removed from a team mid-quarter (cascade delete from quarter_members, or soft-delete?)
+- Whether to implement two-way Jira sync (writing size/priority back to Jira)
+- Role management UI for workspace members (infrastructure exists, UI not yet built)
